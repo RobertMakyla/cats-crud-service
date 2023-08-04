@@ -9,7 +9,7 @@ import org.scalatest.FutureOutcome
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
 
-class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers {
+class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
 
   "InMemory Repo should" - {
