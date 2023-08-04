@@ -55,9 +55,6 @@ class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers {
     }
   }
 
-  private val p1 = Person("Robert", 37, Male)
-  private val p2 = Person("Jane", 38, Female)
-
   type FixtureParam = RepoInMem[IO]
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
