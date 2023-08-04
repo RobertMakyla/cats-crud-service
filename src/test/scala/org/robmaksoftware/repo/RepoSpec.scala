@@ -1,53 +1,67 @@
 package org.robmaksoftware.repo
 
 import cats.effect.IO
-import cats.effect._
 import cats.effect.testing.scalatest.AsyncIOSpec
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.freespec.AsyncFreeSpec
-//import cats.syntax.option._
-//import cats.syntax.eq._
-//import cats.Eq
-import org.robmaksoftware.domain.{Person, PersonId}
-import org.robmaksoftware.domain.Person._
+import cats.syntax.option._
+import org.robmaksoftware.domain.Person
 import org.robmaksoftware.domain.Sex.{Female, Male}
+import org.scalatest.FutureOutcome
+import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
 
-class RepoSpec extends AsyncFreeSpec with AsyncIOSpec with Matchers {
+class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers {
 
-  "Mem Repo should" - {
 
-    val repo = Repo.inMem[IO]
+  "InMemory Repo should" - {
 
     val p1 = Person("Robert", 37, Male)
     val p2 = Person("Jane", 38, Female)
 
 
-    "Create" in {
-      repo.add(p1).asserting(_.value == "123")
+    "Create" in { repo =>
+      repo.add(p1).asserting(_.value.nonEmpty shouldBe true)
     }
 
-    //    "Read" in {
-    //      for {
-    //        id1 <- repo.add(p1)
-    //        res <- repo.get(id1)
-    //      } yield assert(res === p1)
-    //    }
+    "Read" in { repo =>
 
-    //    // create
-    //    val id1 = repo.add(p1)
-    //
-    //    // read
-    //    repo.get(id1) shouldBe p1.some
-    //
-    //    //update
-    //    repo.update(id1, p2)
-    //    repo.get(id1) shouldBe p2.some
-    //
-    //    //delete
-    //    repo.delete(id1)
-    //    repo.get(id1) shouldBe none
+      val result = for {
+        id1 <- repo.add(p1)
+        p <- repo.get(id1)
+      } yield p
 
+      result.asserting(_ shouldBe p1.some)
+    }
 
+    "Update" in { repo =>
+
+      val result = for {
+        id1 <- repo.add(p1)
+        _ <- repo.update(id1, p2)
+        p <- repo.get(id1)
+      } yield p
+
+      result.asserting(_ shouldBe p2.some)
+    }
+
+    "Delete" in { repo =>
+
+      val result = for {
+        id1 <- repo.add(p1)
+        _ <- repo.delete(id1)
+        p <- repo.get(id1)
+      } yield p
+
+      result.asserting(_ shouldBe none)
+    }
+  }
+
+  private val p1 = Person("Robert", 37, Male)
+  private val p2 = Person("Jane", 38, Female)
+
+  type FixtureParam = RepoInMem[IO]
+
+  override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
+    val repo = Repo.inMem[IO]
+    new FutureOutcome(test(repo).toFuture)
   }
 }
