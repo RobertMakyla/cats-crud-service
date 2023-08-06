@@ -1,5 +1,7 @@
 package org.robmaksoftware.repo
 
+import java.time.Instant
+
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.syntax.option._
@@ -14,8 +16,10 @@ class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*
 
   "InMemory Repo should" - {
 
-    val p1 = Person("Robert", 37, Male)
-    val p2 = Person("Jane", 38, Female)
+    val date = Instant.ofEpochMilli(12345)
+    val p1 = Person("Robert", 37, Male, 10L, date)
+    val p2 = Person("Jane", 38, Female, 10L, date.plusMillis(5))
+    val p3 = Person("Mary", 25, Female, 10L, date.plusMillis(10))
 
 
     "Create" in { repo =>
@@ -26,6 +30,7 @@ class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*
 
       val result = for {
         id1 <- repo.add(p1)
+        _ <- repo.add(p2)
         p <- repo.get(id1)
       } yield p
 
@@ -36,6 +41,7 @@ class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*
 
       val result = for {
         id1 <- repo.add(p1)
+        _ <- repo.add(p2)
         _ <- repo.update(id1, p2)
         p <- repo.get(id1)
       } yield p
@@ -47,11 +53,37 @@ class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*
 
       val result = for {
         id1 <- repo.add(p1)
+        _ <- repo.add(p2)
         _ <- repo.delete(id1)
         p <- repo.get(id1)
       } yield p
 
       result.asserting(_ shouldBe none)
+    }
+
+
+    "Stream all" in { repo =>
+
+      val result: IO[List[Person]] = for {
+        _ <- repo.add(p1)
+        _ <- repo.add(p2)
+        _ <- repo.add(p3)
+        all <- repo.all.compile.toList
+      } yield all
+
+      result.asserting(_ should contain theSameElementsAs List(p1, p2, p3))
+    }
+
+    "Stream all order by joined" in { repo =>
+
+      val result: IO[List[Person]] = for {
+        _ <- repo.add(p2)
+        _ <- repo.add(p1)
+        _ <- repo.add(p3)
+        all <- repo.allOrderByJoined.compile.toList
+      } yield all
+
+      result.asserting(_ shouldBe List(p1, p2, p3))
     }
   }
 

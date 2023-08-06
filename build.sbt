@@ -20,6 +20,9 @@ lazy val root = project
       "org.typelevel" %% "cats-effect" % "3.2.0",
       "org.typelevel" %% "cats-effect-testing-scalatest" % "1.5.0" % Test,
 
+      // fs2
+      "co.fs2" %% "fs2-core" % "3.7.0",
+
       // enum
       "com.beachape" %% "enumeratum" % "1.7.0",
 

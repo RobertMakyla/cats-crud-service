@@ -20,6 +20,10 @@ trait Repo[F[_], K, V] {
   def update(id: K, newItem: V): F[Unit]
 
   def delete(id: K): F[Unit]
+
+  def all: fs2.Stream[F, V]
+
+  def allOrderByJoined: fs2.Stream[F, V]
 }
 
 final case class RepoInMem[F[_] : Sync](private val people: HashMap[PersonId, Person]) extends Repo[F, PersonId, Person] {
@@ -57,9 +61,12 @@ final case class RepoInMem[F[_] : Sync](private val people: HashMap[PersonId, Pe
     people.remove(id)
   }
 
+  override def all: fs2.Stream[F, Person] = fs2.Stream.emits(people.values.toSeq)
+
+  override def allOrderByJoined: fs2.Stream[F, Person] = fs2.Stream.emits(people.values.toSeq.sortBy(_.joined))
 }
 
 object Repo {
-  def inMem[F[_]: Sync] = new RepoInMem[F](HashMap.empty) //todo wrap it in Resource ?
+  def inMem[F[_] : Sync] = new RepoInMem[F](HashMap.empty) //todo wrap it in Resource ?
 
 }
