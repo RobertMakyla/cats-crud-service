@@ -17,9 +17,13 @@ object DbTransactor {
   val driver = "orq.sqlite.JDBC"
   val user = "user"
   val pass = "s3cr3t"
+
+  val flywayMigrationDir = "classpath:db-migration"
+
   val poolSize = 4
 
-  def sqlite[F[_] : Async](flywayMigrationDir: Option[String] = "classpath:db-migration".some): Resource[F, Transactor[F]] =
+
+  def sqlite[F[_] : Async](flywayMigration: Boolean): Resource[F, Transactor[F]] =
     for {
 
       filePath <- tempDbFilePath.toResource
@@ -27,7 +31,7 @@ object DbTransactor {
       ec <- ExecutionContexts.fixedThreadPool[F](poolSize)
       transactor <- HikariTransactor.newHikariTransactor[F](driver, url, user, pass, ec)
       _ <- Sync[F].delay {
-        flywayConfig(url, user, pass, flywayMigrationDir)
+        flywayConfig(url, user, pass, flywayMigration)
           .load()
           .migrate()
       }.toResource
@@ -39,12 +43,12 @@ object DbTransactor {
     tmpFile.getPath
   }
 
-  private def flywayConfig(url: String, user: String, pass: String, migrationDir: Option[String]) =
+  private def flywayConfig(url: String, user: String, pass: String, flywayMigration: Boolean) =
     Flyway
       .configure()
       .dataSource(url, user, pass)
       .outOfOrder(true) // if v1 and v3 are installed, it can still install v2
-      .locations(migrationDir.toList.map(dir => new Location(dir)): _*)
+      .locations((if (flywayMigration) new Location(flywayMigrationDir) :: Nil else Nil): _*)
 
 
 }
