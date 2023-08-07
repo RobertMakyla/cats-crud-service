@@ -1,6 +1,5 @@
 package org.robmaksoftware.db
 
-import cats.syntax.option._
 import cats.effect.{Async, Resource, Sync}
 import cats.effect.syntax.resource._
 import java.io.File
