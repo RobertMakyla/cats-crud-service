@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS people
+(
+  id     VARCHAR   NOT NULL,
+  name   VARCHAR   NOT NULL,
+  age    INTEGER   NOT NULL,
+  sex    VARCHAR   NOT NULL,
+  credit DECIMAL   NOT NULL,
+  joined TIMESTAMP NOT NULL
+  PRIMARY KEY (id)
+);

@@ -28,5 +28,21 @@ lazy val root = project
 
       // test
       "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
+
+      // db
+      "org.postgresql" % "postgresql" % "42.6.0",
+
+      // doobie - JDBC layer for Scala/Cats
+      "org.tpolecat" %% "doobie-core"      % "1.0.0-RC4",
+      "org.tpolecat" %% "doobie-hikari"    % "1.0.0-RC4",          // HikariCP transactor.
+      "org.tpolecat" %% "doobie-postgres"  % "1.0.0-RC4",          // Postgres driver 42.6.0 + type mappings.
+      "org.tpolecat" %% "doobie-specs2"    % "1.0.0-RC4" % "test", // Specs2 support for typechecking statements.
+      "org.tpolecat" %% "doobie-scalatest" % "1.0.0-RC4" % "test",  // ScalaTest support for typechecking statements.
+
+      // SQLITE - in memory light db
+      "org.xerial"     % "sqlite-jdbc" % "3.42.0.0",
+
+      // version controlled db schema evolution (migration from SQL files)
+      "org.flywaydb" % "flyway-core" % "9.20.1"
     )
   )
