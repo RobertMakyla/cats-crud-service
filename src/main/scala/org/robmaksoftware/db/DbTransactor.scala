@@ -10,6 +10,9 @@ import doobie.util.transactor.Transactor
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.Location
 
+/*
+ * for simple Postgres transactor : https://blog.rockthejvm.com/doobie/
+ */
 
 object DbTransactor {
 
@@ -22,7 +25,9 @@ object DbTransactor {
   val poolSize = 4
 
 
-  def sqlite[F[_] : Async](flywayMigration: Boolean): Resource[F, Transactor[F]] =
+  def sqlite[F[_] : Async](
+    flywayMigration: Boolean
+  ): Resource[F, Transactor[F]] =
     for {
 
       filePath <- tempDbFilePath.toResource
