@@ -3,6 +3,7 @@ package org.robmaksoftware.repo
 import cats.effect.Sync
 import cats.effect.Resource
 import cats.effect.syntax.resource._
+import org.robmaksoftware.domain.{Person, PersonId}
 
 import scala.collection.mutable.HashMap
 
@@ -22,6 +23,6 @@ trait Repo[F[_], K, V] {
 }
 
 object Repo {
-  def inMem[F[_] : Sync] = new RepoInMem[F](HashMap.empty) //todo wrap it in Resource ?
+  def inMem[F[_] : Sync]: Repo[F, PersonId, Person] = new RepoInMem[F](HashMap.empty)
 
 }

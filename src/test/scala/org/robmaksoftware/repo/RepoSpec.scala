@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.syntax.option._
-import org.robmaksoftware.domain.Person
+import org.robmaksoftware.domain.{Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.scalatest.FutureOutcome
 import org.scalatest.freespec.FixtureAsyncFreeSpec
@@ -87,7 +87,7 @@ class RepoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*
     }
   }
 
-  type FixtureParam = RepoInMem[IO]
+  type FixtureParam = Repo[IO, PersonId, Person]
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val repo = Repo.inMem[IO]
