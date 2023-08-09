@@ -15,7 +15,7 @@ import doobie.implicits.toSqlInterpolator
 import org.robmaksoftware.domain._
 import org.robmaksoftware.dao.Metas._
 
-trait PeopleDao[F[_]] extends Dao[F, PersonId, Person]  {
+trait PeopleDao[F[_]] extends Dao[F, PersonId, Person] {
 
   // Read
 
@@ -56,14 +56,15 @@ object PeopleDao {
     }
   }
 
-  private val tableName = Fragment.const("PEOPLE")
+  private val tableName = "PEOPLE"
+  private val tableNameFr = Fragment.const(tableName)
   private val pk = "id"
   private val valueCols = List("name", "age", "sex", "credit", "joined")
   private val valueColsToUpdate = valueCols.map(col => s"$col = ?").mkString(", ")
   private val valueColsFr = Fragment.const(valueCols.mkString(", "))
   private val allColsFr = Fragment.const((pk :: valueCols).mkString(", "))
 
-  private def whereId(id: PersonId): Fragment = Fragments.whereAnd(fr"$pk = $id")
+  private def whereId(id: PersonId): Fragment = Fragments.whereAnd(fr"id = $id")
 
 
   def makeDao: PeopleDao[doobie.ConnectionIO] = new PeopleDao[ConnectionIO] {
@@ -75,24 +76,25 @@ object PeopleDao {
     private def newId: PersonId = PersonId(UUID.randomUUID().toString)
 
     override def get(id: PersonId): ConnectionIO[Option[Person]] =
-      sql"SELECT $valueColsFr FROM $tableName ${whereId(id)} LIMIT 1".query[Person].option
+      sql"SELECT $valueColsFr FROM $tableNameFr ${whereId(id)} LIMIT 1".query[Person].option
 
     override def all: fs2.Stream[ConnectionIO, Person] =
-      sql"SELECT $valueColsFr FROM $tableName".query[Person].stream
+      sql"SELECT $valueColsFr FROM $tableNameFr".query[Person].stream
 
     override def allOrderByJoined: fs2.Stream[ConnectionIO, Person] =
-      sql"SELECT $valueColsFr FROM $tableName ORDER BY joined".query[Person].stream
+      sql"SELECT $valueColsFr FROM $tableNameFr ORDER BY joined".query[Person].stream
 
     override def add(p: Person): ConnectionIO[PersonId] = {
       val id: PersonId = newId
-      sql"INSERT INTO $tableName ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) ".update.run.map(_ => id)
+      sql"INSERT INTO $tableNameFr ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) ".update.run.map(_ => id)
     }
 
-    override def update(id: PersonId, p: Person): ConnectionIO[Int] = Update[(String, Int, Sex, Double, Instant, PersonId)](
-      s"UPDATE $tableName SET $valueColsToUpdate where $pk = ?"
-    ).run((p.name, p.age, p.sex, p.credit, p.joined, id))
+    override def update(id: PersonId, p: Person): ConnectionIO[Int] =
+      Update[(String, Int, Sex, Double, Instant, PersonId)](
+        s"UPDATE $tableName SET $valueColsToUpdate where $pk = ?"
+      ).run((p.name, p.age, p.sex, p.credit, p.joined, id))
 
-    override def delete(id: PersonId): ConnectionIO[Int] = sql"DELETE FROM $tableName ${whereId(id)}".update.run
+    override def delete(id: PersonId): ConnectionIO[Int] = sql"DELETE FROM $tableNameFr ${whereId(id)}".update.run
   }
 
 }

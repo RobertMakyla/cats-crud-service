@@ -1,5 +1,4 @@
 --db
-correct PeopleDaoSpec
 add Property based tests (Generators) for dao (and inMem repo?)
 
 
