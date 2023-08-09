@@ -1,4 +1,4 @@
-package org.robmaksoftware.repo
+package org.robmaksoftware.dao
 
 import java.time.Instant
 import java.util.UUID
@@ -17,7 +17,7 @@ import org.robmaksoftware.domain._
 import org.robmaksoftware.domain.Metas._
 
 trait PeopleDao[F[_]]
-  extends Repo[F, PersonId, Person]
+  extends Dao[F, PersonId, Person]
     with PeopleDaoWrite[F]
     with PeopleDaoRead[F]
 

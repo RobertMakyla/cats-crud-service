@@ -5,9 +5,9 @@ import java.time.temporal.ChronoUnit
 import cats.Functor
 import cats.syntax.functor._
 import org.robmaksoftware.domain._
-import org.robmaksoftware.repo.Repo
+import org.robmaksoftware.dao.Dao
 
-final class PersonService[F[_] : Functor](repo: Repo[F, PersonId, Person])(implicit compiler: fs2.Compiler[F, F]) {
+final class PersonService[F[_] : Functor](repo: Dao[F, PersonId, Person])(implicit compiler: fs2.Compiler[F, F]) {
 
   def add(p: Person): F[PersonId] = repo.add(p)
 

@@ -1,4 +1,4 @@
-package org.robmaksoftware.repo
+package org.robmaksoftware.dao
 
 import cats.effect.Sync
 import cats.effect.Resource
@@ -7,7 +7,7 @@ import org.robmaksoftware.domain.{Person, PersonId}
 
 import scala.collection.mutable.HashMap
 
-trait Repo[F[_], K, V] {
+trait Dao[F[_], K, V] {
 
   def get(id: K): F[Option[V]]
 
@@ -22,7 +22,7 @@ trait Repo[F[_], K, V] {
   def allOrderByJoined: fs2.Stream[F, V]
 }
 
-object Repo {
-  def inMem[F[_] : Sync]: Repo[F, PersonId, Person] = new RepoInMem[F](HashMap.empty)
+object Dao {
+  def inMemDao[F[_] : Sync]: Dao[F, PersonId, Person] = new InMemPeopleDao[F](HashMap.empty)
 
 }
