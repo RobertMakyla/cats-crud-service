@@ -27,7 +27,7 @@ trait Dao[F[_], K, V] {
 
 object Dao {
 
-  type DaoResource[F[_]] =  Resource[F, Dao[F, PersonId, Person]]
+  type DaoResource[F[_]] = Resource[F, Dao[F, PersonId, Person]]
 
 
   def inMemDao[F[_] : Sync]: DaoResource[F] =
@@ -36,12 +36,10 @@ object Dao {
     }.toResource
 
 
-  def dbDao[F[_] : MonadCancelThrow : Async]: DaoResource[F]  =
+  def dbDao[F[_] : MonadCancelThrow : Async]: DaoResource[F] =
     for {
-      transactor <- DbTransactor.sqlite(flywayMigration = true)
-    } yield {
-      implicit val xa: Transactor[F] = transactor
-      PeopleDao.makeDao.to[F]
-    }
+      implicit0(xa: Transactor[F]) <- DbTransactor.sqlite(flywayMigration = true) // implicit0 comes from plugin: https://github.com/oleg-py/better-monadic-for
+    } yield PeopleDao.makeDao.to[F]
+
 
 }
