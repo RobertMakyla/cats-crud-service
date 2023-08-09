@@ -4,15 +4,12 @@ import java.time.Instant
 
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
-import cats.Eq._
 import cats.syntax.option._
-import org.robmaksoftware.dao.Dao.DaoResource
 import org.robmaksoftware.domain.{Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.scalatest.{FutureOutcome, Outcome}
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
-import org.robmaksoftware.domain.PersonId._
 
 class PeopleInMemDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
@@ -148,5 +145,6 @@ class PeopleInMemDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO 
     val repo = Dao.inMemDao[IO]
     new FutureOutcome(test(repo).toFuture)
   }
-   */
+
+  */
 }
