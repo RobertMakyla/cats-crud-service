@@ -4,12 +4,14 @@ import java.time.Instant
 
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
+import cats.Eq._
 import cats.syntax.option._
 import org.robmaksoftware.domain.{Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.scalatest.FutureOutcome
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
+import org.robmaksoftware.domain.PersonId._
 
 class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
@@ -22,8 +24,19 @@ class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/
     val p3 = Person("Mary", 25, Female, 10L, date.plusMillis(10))
 
 
-    "Create" in { repo =>
-      repo.add(p1).asserting(_.value.nonEmpty shouldBe true)
+    "Create with unique ID" in { repo =>
+
+      val result = for {
+        id1 <- repo.add(p1)
+        id2 <- repo.add(p1)
+      } yield (id1, id2)
+
+      result.asserting { res =>
+        val (resId1, resId2) = res
+        resId1.value.nonEmpty shouldBe true
+        resId2.value.nonEmpty shouldBe true
+        resId1 should not be resId2
+      }
     }
 
     "Read" in { repo =>
@@ -32,21 +45,45 @@ class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/
         id1 <- repo.add(p1)
         _ <- repo.add(p2)
         p <- repo.get(id1)
-      } yield p
+        n <- repo.get(PersonId("X"))
+      } yield (p, n)
 
-      result.asserting(_ shouldBe p1.some)
+      result.asserting { res =>
+        val (personOpt, noPerson) = res
+        personOpt shouldBe p1.some
+        noPerson shouldBe none
+      }
     }
 
-    "Update" in { repo =>
+    "Update existing Person" in { repo =>
 
       val result = for {
         id1 <- repo.add(p1)
-        _ <- repo.add(p2)
-        _ <- repo.update(id1, p2)
+        i <- repo.update(id1, p2)
         p <- repo.get(id1)
-      } yield p
+      } yield (i, p)
 
-      result.asserting(_ shouldBe p2.some)
+      result.asserting { res =>
+        val (inserted, personOpt) = res
+        inserted shouldBe 1
+        personOpt shouldBe p2.some
+      }
+    }
+
+    "Update non-existing Person" in { repo =>
+
+      val result = for {
+        id1 <- repo.add(p1)
+        i <- repo.update(PersonId("X"), p2)
+        p <- repo.get(id1)
+      } yield (i, p)
+
+      result.asserting { res =>
+        val (inserted, personOpt) = res
+        inserted shouldBe 0
+        personOpt shouldBe p1.some
+
+      }
     }
 
     "Delete" in { repo =>
@@ -54,11 +91,15 @@ class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/
       val result = for {
         id1 <- repo.add(p1)
         _ <- repo.add(p2)
-        _ <- repo.delete(id1)
-        p <- repo.get(id1)
-      } yield p
+        i <- repo.delete(id1)
+        n <- repo.get(id1)
+      } yield (i, n)
 
-      result.asserting(_ shouldBe none)
+      result.asserting { res =>
+        val (deleted, noPerson) = res
+        deleted shouldBe 1
+        noPerson shouldBe none
+      }
     }
 
 
