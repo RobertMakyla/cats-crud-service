@@ -3,7 +3,6 @@ package org.robmaksoftware.domain
 import java.time.Instant
 
 import cats.Eq
-import doobie.util.Write
 
 
 case class PersonId(value: String) extends AnyVal
