@@ -1,6 +1,7 @@
-package org.robmaksoftware.domain
+package org.robmaksoftware.dao
 
 import doobie.util.meta.{LegacyInstantMetaInstance, Meta}
+import org.robmaksoftware.domain.{PersonId, Sex}
 
 object Metas extends LegacyInstantMetaInstance /*this gives Meta[Instant] */ {
 

@@ -14,7 +14,7 @@ import doobie.Transactor
 import doobie.implicits._
 import doobie.implicits.toSqlInterpolator
 import org.robmaksoftware.domain._
-import org.robmaksoftware.domain.Metas._
+import org.robmaksoftware.dao.Metas._
 
 trait PeopleDao[F[_]]
   extends Dao[F, PersonId, Person]
