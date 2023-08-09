@@ -33,8 +33,8 @@ class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/
 
       result.asserting { res =>
         val (resId1, resId2) = res
-        resId1.value.nonEmpty shouldBe true
-        resId2.value.nonEmpty shouldBe true
+        resId1.value should not be empty
+        resId2.value should not be empty
         resId1 should not be resId2
       }
     }
