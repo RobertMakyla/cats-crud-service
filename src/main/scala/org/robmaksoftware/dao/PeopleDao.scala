@@ -69,8 +69,6 @@ object PeopleDao {
 
   def makeDao: PeopleDao[doobie.ConnectionIO] = new PeopleDao[ConnectionIO] {
 
-    //implicit val readPersonEv: Read[Person] = Read.
-
     private def personValsToInsert(p: Person) = fr"${p.name}, ${p.age}, ${p.sex}, ${p.credit}, ${p.joined}"
 
     private def newId: PersonId = PersonId(UUID.randomUUID().toString)
