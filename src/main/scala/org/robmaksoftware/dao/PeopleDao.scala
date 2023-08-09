@@ -8,7 +8,6 @@ import doobie.Fragment
 import doobie.Fragments
 import doobie._
 import doobie.ConnectionIO
-import doobie.Write
 import doobie.Read
 import doobie.Transactor
 import doobie.implicits._
@@ -16,22 +15,17 @@ import doobie.implicits.toSqlInterpolator
 import org.robmaksoftware.domain._
 import org.robmaksoftware.dao.Metas._
 
-trait PeopleDao[F[_]]
-  extends Dao[F, PersonId, Person]
-    with PeopleDaoWrite[F]
-    with PeopleDaoRead[F]
+trait PeopleDao[F[_]] extends Dao[F, PersonId, Person]  {
 
-
-trait PeopleDaoRead[F[_]] {
+  // Read
 
   def get(id: PersonId): F[Option[Person]]
 
   def all: fs2.Stream[F, Person]
 
   def allOrderByJoined: fs2.Stream[F, Person]
-}
 
-trait PeopleDaoWrite[F[_]] {
+  // Write
 
   def add(item: Person): F[PersonId]
 
@@ -44,21 +38,15 @@ trait PeopleDaoWrite[F[_]] {
 object PeopleDao {
 
 
-  implicit class PeopleDaoReadOps(dao: PeopleDaoRead[ConnectionIO]) {
+  implicit class PeopleDaoOps(dao: PeopleDao[doobie.ConnectionIO]) {
 
-    def connIo_to_f[F[_] : MonadCancelThrow](implicit xa: Transactor[F]): PeopleDaoRead[F] = new PeopleDaoRead[F] {
+    def to[F[_] : MonadCancelThrow](implicit xa: Transactor[F]): PeopleDao[F] = new PeopleDao[F] {
 
       override def get(id: PersonId): F[Option[Person]] = dao.get(id).transact(xa)
 
       override def all: fs2.Stream[F, Person] = dao.all.transact(xa)
 
       override def allOrderByJoined: fs2.Stream[F, Person] = dao.allOrderByJoined.transact(xa)
-    }
-  }
-
-  implicit class PeopleDaoWriteOps(dao: PeopleDaoWrite[ConnectionIO]) {
-
-    def connIo_to_f[F[_] : MonadCancelThrow](implicit xa: Transactor[F]): PeopleDaoWrite[F] = new PeopleDaoWrite[F] {
 
       override def add(item: Person): F[PersonId] = dao.add(item).transact(xa)
 
@@ -78,7 +66,13 @@ object PeopleDao {
   private def whereId(id: PersonId): Fragment = Fragments.whereAnd(fr"$pk = $id")
 
 
-  def makeReadDao(implicit readPersonEv: Read[Person]): PeopleDaoRead[ConnectionIO] = new PeopleDaoRead[ConnectionIO] {
+  def makeDao: PeopleDao[doobie.ConnectionIO] = new PeopleDao[ConnectionIO] {
+
+    //implicit val readPersonEv: Read[Person] = Read.
+
+    private def personValsToInsert(p: Person) = fr"${p.name}, ${p.age}, ${p.sex}, ${p.credit}, ${p.joined}"
+
+    private def newId: PersonId = PersonId(UUID.randomUUID().toString)
 
     override def get(id: PersonId): ConnectionIO[Option[Person]] =
       sql"SELECT $valueColsFr FROM $tableName ${whereId(id)} LIMIT 1".query[Person].option
@@ -88,15 +82,6 @@ object PeopleDao {
 
     override def allOrderByJoined: fs2.Stream[ConnectionIO, Person] =
       sql"SELECT $valueColsFr FROM $tableName ORDER BY joined".query[Person].stream
-  }
-
-
-  def makeWriteDao: PeopleDaoWrite[ConnectionIO] = new PeopleDaoWrite[ConnectionIO] {
-
-
-    private def personValsToInsert(p: Person) = fr"${p.name}, ${p.age}, ${p.sex}, ${p.credit}, ${p.joined}"
-
-    private def newId: PersonId = PersonId(UUID.randomUUID().toString)
 
     override def add(p: Person): ConnectionIO[PersonId] = {
       val id: PersonId = newId

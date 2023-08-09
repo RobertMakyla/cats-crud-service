@@ -1,8 +1,11 @@
 package org.robmaksoftware.dao
 
-import cats.effect.Sync
-import cats.effect.Resource
+import cats.effect.kernel.Resource
+import cats.effect.{Async, MonadCancelThrow, Sync}
 import cats.effect.syntax.resource._
+import doobie.util.transactor.Transactor
+import org.robmaksoftware.dao.PeopleDao._
+import org.robmaksoftware.db.DbTransactor
 import org.robmaksoftware.domain.{Person, PersonId}
 
 import scala.collection.mutable.HashMap
@@ -23,6 +26,22 @@ trait Dao[F[_], K, V] {
 }
 
 object Dao {
-  def inMemDao[F[_] : Sync]: Dao[F, PersonId, Person] = new InMemPeopleDao[F](HashMap.empty)
+
+  type DaoResource[F[_]] =  Resource[F, Dao[F, PersonId, Person]]
+
+
+  def inMemDao[F[_] : Sync]: DaoResource[F] =
+    Sync[F].delay {
+      new PeopleInMemDao[F](HashMap.empty)
+    }.toResource
+
+
+  def dbDao[F[_] : MonadCancelThrow : Async]: DaoResource[F]  =
+    for {
+      transactor <- DbTransactor.sqlite(flywayMigration = true)
+    } yield {
+      implicit val xa: Transactor[F] = transactor
+      PeopleDao.makeDao.to[F]
+    }
 
 }

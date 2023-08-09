@@ -16,13 +16,13 @@ import org.flywaydb.core.api.Location
 
 object DbTransactor {
 
-  val driver = "orq.sqlite.JDBC"
-  val user = "user"
-  val pass = "s3cr3t"
+  private val driver = "orq.sqlite.JDBC"
+  private val user = "user"
+  private val pass = "s3cr3t"
 
-  val flywayMigrationDir = "classpath:db-migration"
+  private val flywayMigrationDir = "classpath:db-migration"
 
-  val poolSize = 4
+  private val poolSize = 4
 
 
   def sqlite[F[_] : Async](

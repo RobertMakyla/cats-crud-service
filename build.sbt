@@ -46,3 +46,5 @@ lazy val root = project
       "org.flywaydb" % "flyway-core" % "9.20.1"
     )
   )
+
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1") // Define implicits (implicit0) in for-comprehensions or matches

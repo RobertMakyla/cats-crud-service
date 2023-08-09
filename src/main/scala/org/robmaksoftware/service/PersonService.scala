@@ -7,14 +7,14 @@ import cats.syntax.functor._
 import org.robmaksoftware.domain._
 import org.robmaksoftware.dao.Dao
 
-final class PersonService[F[_] : Functor](repo: Dao[F, PersonId, Person])(implicit compiler: fs2.Compiler[F, F]) {
+final class PersonService[F[_] : Functor](dao: Dao[F, PersonId, Person])(implicit compiler: fs2.Compiler[F, F]) {
 
-  def add(p: Person): F[PersonId] = repo.add(p)
+  def add(p: Person): F[PersonId] = dao.add(p)
 
-  def count: F[Long] = repo.all.compile.count
+  def count: F[Long] = dao.all.compile.count
 
   def sumCredits: F[Double] =
-    repo
+    dao
       .all
       .scan(0d)(_ + _.credit)
       .compile
@@ -22,7 +22,7 @@ final class PersonService[F[_] : Functor](repo: Dao[F, PersonId, Person])(implic
       .map(_.getOrElse(0d))
 
   def creditsPerDate: fs2.Stream[F, DateCredits] =
-    repo
+    dao
       .allOrderByJoined
       .groupAdjacentBy(_.joined.truncatedTo(ChronoUnit.DAYS))
       .map { case (epochday, chunk) =>

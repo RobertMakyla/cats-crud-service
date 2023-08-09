@@ -5,10 +5,10 @@ import java.time.temporal.ChronoUnit
 
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
-import org.robmaksoftware.domain.{DateCredits, Person}
+import org.robmaksoftware.domain.{DateCredits, Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.robmaksoftware.dao.Dao
-import org.scalatest.FutureOutcome
+import org.scalatest.{FutureOutcome, Outcome}
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -73,8 +73,10 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
   type FixtureParam = PersonService[IO]
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
-    val repo = Dao.inMemDao[IO]
-    val service: PersonService[IO] = new PersonService[IO](repo)
-    new FutureOutcome(test(service).toFuture)
+    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO].use { dao: Dao[IO, PersonId, Person] =>
+      val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(new PersonService[IO](dao)))
+      IO.fromFuture(IO(testResult.toFuture))
+    }
+    new FutureOutcome(ioOutcome.unsafeToFuture())
   }
 }

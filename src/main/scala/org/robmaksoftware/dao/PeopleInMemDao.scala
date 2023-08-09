@@ -12,7 +12,7 @@ import org.robmaksoftware.domain.Person
 import org.robmaksoftware.domain.PersonId
 
 
-final case class InMemPeopleDao[F[_] : Sync](private val people: HashMap[PersonId, Person]) extends Dao[F, PersonId, Person] {
+final case class PeopleInMemDao[F[_] : Sync](private val people: HashMap[PersonId, Person]) extends Dao[F, PersonId, Person] {
 
   private val F = Sync[F]
 

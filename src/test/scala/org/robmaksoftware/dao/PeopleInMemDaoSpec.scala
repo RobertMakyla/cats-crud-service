@@ -6,17 +6,18 @@ import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.Eq._
 import cats.syntax.option._
+import org.robmaksoftware.dao.Dao.DaoResource
 import org.robmaksoftware.domain.{Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
-import org.scalatest.FutureOutcome
+import org.scalatest.{FutureOutcome, Outcome}
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.robmaksoftware.domain.PersonId._
 
-class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
+class PeopleInMemDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
 
-  "InMemory Dao should" - {
+  "Dao should" - {
 
     val date = Instant.ofEpochMilli(12345)
     val p1 = Person("Robert", 37, Male, 10L, date)
@@ -128,10 +129,24 @@ class DaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/
     }
   }
 
-  type FixtureParam = Dao[IO, PersonId, Person]
+  override type FixtureParam = Dao[IO, PersonId, Person]
+
+  override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
+    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO].use { dao: Dao[IO, PersonId, Person] =>
+      val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(dao))
+      IO.fromFuture(IO(testResult.toFuture))
+    }
+    new FutureOutcome(ioOutcome.unsafeToFuture())
+  }
+
+
+  /*
+
+  // when Fixture in not wrapped in Resource :
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val repo = Dao.inMemDao[IO]
     new FutureOutcome(test(repo).toFuture)
   }
+   */
 }
