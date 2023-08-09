@@ -13,13 +13,13 @@ final class PersonService[F[_] : Functor](repo: Repo[F, PersonId, Person])(impli
 
   def count: F[Long] = repo.all.compile.count
 
-  def sumCredits: F[Long] =
+  def sumCredits: F[Double] =
     repo
       .all
-      .scan(0L)(_ + _.credit)
+      .scan(0d)(_ + _.credit)
       .compile
       .last
-      .map(_.getOrElse(0L))
+      .map(_.getOrElse(0d))
 
   def creditsPerDate: fs2.Stream[F, DateCredits] =
     repo

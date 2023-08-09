@@ -32,20 +32,20 @@ final case class RepoInMem[F[_] : Sync](private val people: HashMap[PersonId, Pe
       }
     } yield id
 
-  override def update(id: PersonId, newItem: Person): F[Unit] =
+  override def update(id: PersonId, newItem: Person): F[Int] =
     for {
-      _ <- F.delay {
-        people.remove(id)
-      }
-      _ <- F.delay {
+      removedPersonOpt <- F.delay(people.remove(id))
+      res <- if (removedPersonOpt.nonEmpty) F.delay {
         people.addOne(id -> newItem)
-      }
-    } yield ()
+      }.as(1) else F.pure(0)
+    } yield res
 
 
-  override def delete(id: PersonId): F[Unit] = F.delay {
-    people.remove(id)
-  }
+  override def delete(id: PersonId): F[Int] =
+    for {
+      removedPersonOpt <- F.delay(people.remove(id))
+      res <- if (removedPersonOpt.nonEmpty) F.pure(1) else F.pure(0)
+    } yield res
 
   override def all: fs2.Stream[F, Person] = fs2.Stream.emits(people.values.toSeq)
 

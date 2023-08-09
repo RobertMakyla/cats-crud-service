@@ -5,5 +5,5 @@ import java.time.Instant
 case class DateCredits(
   date: Instant,
   count: Int,
-  credit: Long
+  credit: Double
 )

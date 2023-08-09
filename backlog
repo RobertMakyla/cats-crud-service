@@ -1,6 +1,5 @@
 --db
-add PeopleDao extends Repo (with doobie transactor)
-test it in Fixture Spec just like InMem repo
+test PeopleDao in Fixture Spec just like InMem repo
 add Property based tests (Generators) for dao (and inMem repo?)
 
 
@@ -9,6 +8,9 @@ test simple reading
 
 --generating http based on yamls
 guardrail
+
+-- http logging
+-- doobie logging
 
 --last but not least
 change project description on github (add all libs/techniques)

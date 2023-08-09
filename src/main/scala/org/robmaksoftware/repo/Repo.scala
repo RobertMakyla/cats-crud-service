@@ -13,9 +13,9 @@ trait Repo[F[_], K, V] {
 
   def add(item: V): F[K]
 
-  def update(id: K, newItem: V): F[Unit]
+  def update(id: K, newItem: V): F[Int]
 
-  def delete(id: K): F[Unit]
+  def delete(id: K): F[Int]
 
   def all: fs2.Stream[F, V]
 
