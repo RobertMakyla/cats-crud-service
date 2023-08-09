@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS people
   age    INTEGER   NOT NULL,
   sex    VARCHAR   NOT NULL,
   credit DECIMAL   NOT NULL,
-  joined TIMESTAMP NOT NULL
+  joined TIMESTAMP NOT NULL,
   PRIMARY KEY (id)
 );

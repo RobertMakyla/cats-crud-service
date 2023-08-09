@@ -14,7 +14,7 @@ import org.scalatest.matchers.should.Matchers
 class PeopleInMemDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
 
-  "Dao should" - {
+  "dao should" - {
 
     val date = Instant.ofEpochMilli(12345)
     val p1 = Person("Robert", 37, Male, 10L, date)

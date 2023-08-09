@@ -33,11 +33,11 @@ lazy val root = project
       "org.postgresql" % "postgresql" % "42.6.0",
 
       // doobie - JDBC layer for Scala/Cats
-      "org.tpolecat" %% "doobie-core"      % "1.0.0-RC4",
-      "org.tpolecat" %% "doobie-hikari"    % "1.0.0-RC4",          // HikariCP transactor.
-      "org.tpolecat" %% "doobie-postgres"  % "1.0.0-RC4",          // Postgres driver 42.6.0 + type mappings.
-      "org.tpolecat" %% "doobie-specs2"    % "1.0.0-RC4" % "test", // Specs2 support for typechecking statements.
-      "org.tpolecat" %% "doobie-scalatest" % "1.0.0-RC4" % "test",  // ScalaTest support for typechecking statements.
+      "org.tpolecat" %% "doobie-core"      % "1.0.0-RC2",
+      "org.tpolecat" %% "doobie-hikari"    % "1.0.0-RC2",          // HikariCP transactor.
+      "org.tpolecat" %% "doobie-postgres"  % "1.0.0-RC2",          // Postgres driver 42.6.0 + type mappings.
+      "org.tpolecat" %% "doobie-specs2"    % "1.0.0-RC2" % "test", // Specs2 support for typechecking statements.
+      "org.tpolecat" %% "doobie-scalatest" % "1.0.0-RC2" % "test",  // ScalaTest support for typechecking statements.
 
       // SQLITE - in memory light db
       "org.xerial"     % "sqlite-jdbc" % "3.42.0.0",

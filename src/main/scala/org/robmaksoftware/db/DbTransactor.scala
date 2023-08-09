@@ -3,6 +3,7 @@ package org.robmaksoftware.db
 import cats.effect.{Async, Resource, Sync}
 import cats.effect.syntax.resource._
 import java.io.File
+import java.nio.file.Files
 
 import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
@@ -16,7 +17,7 @@ import org.flywaydb.core.api.Location
 
 object DbTransactor {
 
-  private val driver = "orq.sqlite.JDBC"
+  private val driver = "org.sqlite.JDBC"
   private val user = "user"
   private val pass = "s3cr3t"
 
@@ -42,7 +43,7 @@ object DbTransactor {
     } yield transactor
 
   private def tempDbFilePath[F[_] : Sync]: F[String] = Sync[F].blocking {
-    val tmpFile = File.createTempFile("db", ".tmp")
+    val tmpFile =  Files.createTempFile("sqlite-tmp-database-", ".db").toFile
     tmpFile.deleteOnExit()
     tmpFile.getPath
   }

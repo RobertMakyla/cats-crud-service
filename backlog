@@ -1,5 +1,5 @@
 --db
-test PeopleDao in Fixture Spec just like InMem repo
+correct PeopleDaoSpec
 add Property based tests (Generators) for dao (and inMem repo?)
 
 
