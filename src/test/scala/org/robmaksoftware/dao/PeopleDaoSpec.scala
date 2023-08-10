@@ -15,12 +15,6 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
 
   "PeopleDao should" - {
 
-    val date = Instant.ofEpochMilli(12345)
-    val p1 = Person("Robert", 37, Male, 10L, date)
-    val p2 = Person("Jane", 38, Female, 10L, date.plusMillis(5))
-    val p3 = Person("Mary", 25, Female, 10L, date.plusMillis(10))
-
-
     "Create with unique ID" in { repo =>
 
       val result = for {
@@ -123,7 +117,15 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
 
       result.asserting(_ shouldBe List(p1, p2, p3))
     }
+
   }
+
+  val date = Instant.ofEpochMilli(12345)
+
+  val p1 = Person("Robert", 37, Male, 10L, date)
+  val p2 = Person("Jane", 38, Female, 10L, date.plusMillis(5))
+  val p3 = Person("Mary", 25, Female, 10L, date.plusMillis(10))
+
 
   override type FixtureParam = Dao[IO, PersonId, Person]
 
