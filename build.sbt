@@ -1,8 +1,7 @@
 
 val catsVersion = "2.4.2"
 
-val scalaTestVersion = "3.2.16"
-
+val doobieVersion = "1.0.0-RC2"
 
 lazy val root = project
   .in(file("."))
@@ -20,24 +19,26 @@ lazy val root = project
       "org.typelevel" %% "cats-effect" % "3.2.0",
       "org.typelevel" %% "cats-effect-testing-scalatest" % "1.5.0" % Test,
 
-      // fs2
+      // streams fs2
       "co.fs2" %% "fs2-core" % "3.7.0",
 
       // enum
       "com.beachape" %% "enumeratum" % "1.7.0",
 
       // test
-      "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
+      "org.scalatest"  %% "scalatest"  % "3.2.16" % "test", // specs, matchers, fixtures
+      "org.scalacheck" %% "scalacheck" % "1.14.1" % "test", // property based testing, generators
+      "org.typelevel" %% "scalacheck-effect" % "1.0.4",
 
       // db
       "org.postgresql" % "postgresql" % "42.6.0",
 
       // doobie - JDBC layer for Scala/Cats
-      "org.tpolecat" %% "doobie-core"      % "1.0.0-RC2",
-      "org.tpolecat" %% "doobie-hikari"    % "1.0.0-RC2",          // HikariCP transactor.
-      "org.tpolecat" %% "doobie-postgres"  % "1.0.0-RC2",          // Postgres driver 42.6.0 + type mappings.
-      "org.tpolecat" %% "doobie-specs2"    % "1.0.0-RC2" % "test", // Specs2 support for typechecking statements.
-      "org.tpolecat" %% "doobie-scalatest" % "1.0.0-RC2" % "test",  // ScalaTest support for typechecking statements.
+      "org.tpolecat" %% "doobie-core"      % doobieVersion,
+      "org.tpolecat" %% "doobie-hikari"    % doobieVersion,          // HikariCP transactor.
+      "org.tpolecat" %% "doobie-postgres"  % doobieVersion,          // Postgres driver 42.6.0 + type mappings.
+      "org.tpolecat" %% "doobie-specs2"    % doobieVersion % "test", // Specs2 support for typechecking statements.
+      "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test",  // ScalaTest support for typechecking statements.
 
       // SQLITE - in memory light db
       "org.xerial"     % "sqlite-jdbc" % "3.42.0.0",
