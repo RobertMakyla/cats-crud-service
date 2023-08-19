@@ -10,7 +10,7 @@ object PeopleGenerator {
 
   implicit val arbitraryPerson: Arbitrary[Person] = Arbitrary{
     for {
-      name <- Gen.asciiStr
+      name <- Gen.listOfN(15, Gen.alphaChar).map(_.mkString)
       age <- Gen.choose(0,120)
       sex <- Gen.oneOf(Sex.values)
       credit <- Gen.choose(0.0D,100D)
@@ -24,7 +24,7 @@ object PeopleGenerator {
     )
   }
 
-  implicit val arbitraryTwoPeople: Arbitrary[(Person, Person)] = Arbitrary {
+  implicit val twoPeopleArb: Arbitrary[(Person, Person)] = Arbitrary {
     for {
       genP1 <- arbitrary[Person]
       genP2 <- arbitrary[Person]

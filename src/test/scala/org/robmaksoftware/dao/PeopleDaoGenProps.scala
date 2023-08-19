@@ -1,11 +1,12 @@
 package org.robmaksoftware.dao
 
+import cats.{Eq, MonadThrow}
 import cats.syntax.eq._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
-import cats.{Eq, MonadThrow}
-import org.robmaksoftware.domain.{Person, PersonId}
+import org.robmaksoftware.domain.Person
+import org.robmaksoftware.domain.PersonId
 import org.scalacheck.Prop._
 import org.scalacheck.effect.PropF
 import org.scalacheck.effect.PropF.forAllF
@@ -35,9 +36,27 @@ class PeopleDaoGenProps[F[_] : MonadThrow](
       }
   }
 
+  private val personRead: PropF[F] = forAllF{
+    pp: (Person, Person) =>
+      val p1 = pp._1
+      val p2 = pp._2
+      for {
+        id1: PersonId <- dao.add(p1)
+        _             <- dao.add(p2)
+        p: Option[Person] <- dao.get(id1)
+        n: Option[Person] <- dao.get(PersonId("X"))
+      } yield {
+        p.fold(false)(_ eqv p1) :| "read person correctly" &&
+          n.isEmpty :| "don't read the person when the id is wrong"
+      }
+  }
+
   //todo more cases
 
-  private val allProperties: List[PropF[F]] = List(personCreated) // todo complete the list
+  private val allProperties: List[PropF[F]] = List(
+    personCreated,
+    personRead,
+  ) // todo complete the list
 
   private val allResults: F[List[Test.Result]] = allProperties.traverse(_.check())
 
