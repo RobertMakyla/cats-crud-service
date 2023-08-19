@@ -27,7 +27,7 @@ lazy val root = project
 
       // test
       "org.scalatest"  %% "scalatest"  % "3.2.16" % "test", // specs, matchers, fixtures
-      "org.scalacheck" %% "scalacheck" % "1.14.1" % "test", // property based testing, generators
+      "org.scalacheck" %% "scalacheck" % "1.17.0" % "test", // property based testing, generators
       "org.typelevel" %% "scalacheck-effect" % "1.0.4",
 
       // db

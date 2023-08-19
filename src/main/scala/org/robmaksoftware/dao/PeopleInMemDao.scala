@@ -26,7 +26,7 @@ final case class PeopleInMemDao[F[_] : Sync](private val people: HashMap[PersonI
 
   override def add(item: Person): F[PersonId] =
     for {
-      id <- makeId.map(PersonId)
+      id <- makeId.map(PersonId.apply)
       _ <- F.delay {
         people.addOne(id -> item)
       }

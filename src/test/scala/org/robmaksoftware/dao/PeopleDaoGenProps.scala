@@ -1,35 +1,28 @@
 package org.robmaksoftware.dao
 
-import cats.{Eq, MonadThrow}
 import cats.syntax.eq._
-import cats.syntax.traverse._
 import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.traverse._
+import cats.{Eq, MonadThrow}
 import org.robmaksoftware.domain.{Person, PersonId}
-import org.scalacheck.{Arbitrary, Test}
-import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Prop._
 import org.scalacheck.effect.PropF
-import org.scalacheck.Prop.propBoolean
-import org.scalacheck.util.Pretty.pretty
 import org.scalacheck.effect.PropF.forAllF
+import org.scalacheck.util.Pretty.pretty
+import org.scalacheck.{Arbitrary, Test}
 import org.scalatest.matchers.should.Matchers
 
 class PeopleDaoGenProps[F[_] : MonadThrow](
   dao: Dao[F, PersonId, Person]
 )(
-  implicit personArb: Arbitrary[Person],
+  implicit personArb: Arbitrary[(Person, Person)],
   personEq: Eq[Person],
   personIdEq: Eq[PersonId],
   compileEv: fs2.Compiler[F, F] // for fs2.Stream
-) extends Matchers {
+) extends MissingPropsConverters with Matchers {
 
-  private implicit val twoPeopleArb: Arbitrary[(Person, Person)] = Arbitrary {
-    for {
-      genP1 <- arbitrary[Person]
-      genP2 <- arbitrary[Person]
-    } yield (genP1, genP2)
-  }
-
-  private val personCreated: PropF[F] = forAllF {
+  private val personCreated: PropF[F] = forAllF{
     pp: (Person, Person) =>
       val p1 = pp._1
       val p2 = pp._2

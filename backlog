@@ -1,12 +1,13 @@
---db
-add Property based tests (Generators) for dao (and inMem repo?)
-
+--resolve todos in the Property based spec
 
 --wiring with http
 test simple reading
 
 --generating http based on yamls
 guardrail
+
+-- cache (effectful?)
+-- config (in to learn excel there is the best type described)
 
 -- http logging
 -- doobie logging
