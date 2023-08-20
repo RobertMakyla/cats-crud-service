@@ -23,7 +23,7 @@ class PeopleDaoGenProps[F[_] : MonadThrow](
   compileEv: fs2.Compiler[F, F] // for fs2.Stream
 ) extends MissingPropsConverters with Matchers {
 
-  private val personCreated: PropF[F] = forAllF{
+  private val personCreated: PropF[F] = forAllF {
     pp: (Person, Person) =>
       val p1 = pp._1
       val p2 = pp._2
@@ -36,13 +36,13 @@ class PeopleDaoGenProps[F[_] : MonadThrow](
       }
   }
 
-  private val personRead: PropF[F] = forAllF{
+  private val personRead: PropF[F] = forAllF {
     pp: (Person, Person) =>
       val p1 = pp._1
       val p2 = pp._2
       for {
         id1: PersonId <- dao.add(p1)
-        _             <- dao.add(p2)
+        _ <- dao.add(p2)
         p: Option[Person] <- dao.get(id1)
         n: Option[Person] <- dao.get(PersonId("X"))
       } yield {
@@ -51,12 +51,74 @@ class PeopleDaoGenProps[F[_] : MonadThrow](
       }
   }
 
-  //todo more cases
+  private val personUpdate: PropF[F] = forAllF {
+    pp: (Person, Person) =>
+      val p1 = pp._1
+      val p2 = pp._2
+      for {
+        id1 <- dao.add(p1)
+        r1 <- dao.update(id1, p2)
+        r2 <- dao.update(PersonId("x"), p2)
+        p <- dao.get(id1)
+      } yield {
+        p.fold(false)(_ eqv p2) :| "update person correctly" &&
+          (r1 eqv 1) :| "return number of updated records" &&
+          (r2 eqv 0) :| "return 0 number for no updates"
+      }
+  }
+
+  private val personDelete: PropF[F] = forAllF {
+    pp: (Person, Person) =>
+      val p1 = pp._1
+      val p2 = pp._2
+      for {
+        id1 <- dao.add(p1)
+        id2 <- dao.add(p2)
+        r1 <- dao.delete(id1)
+        r2 <- dao.delete(PersonId("x"))
+        p <- dao.get(id1)
+      } yield {
+        p.isEmpty :| "person is deleted" &&
+          (r1 eqv 1) :| "return number of deleted records" &&
+          (r2 eqv 0) :| "return 0 number for no deleted records"
+      }
+  }
+
+  private val peopleStreamed: PropF[F] = forAllF {
+    pp: (Person, Person) =>
+      val p1 = pp._1
+      val p2 = pp._2
+      for {
+        id1 <- dao.add(p1)
+        id2 <- dao.add(p2)
+        res <- dao.all.compile.toList
+      } yield {
+        List(p1, p2).forall(res.contains) :| "person records are streamed"
+      }
+  }
+
+  private val peopleStreamedOrdered: PropF[F] = forAllF {
+    pp: (Person, Person) =>
+      val p1 = pp._1
+      val p2 = pp._2
+      for {
+        id1 <- dao.add(p1)
+        id2 <- dao.add(p2)
+        res <- dao.allOrderByJoined.compile.toList
+      } yield {
+        List(p1, p2).forall(res.contains) :| "person records are streamed" &&
+          (res.head.joined.toEpochMilli < res.last.joined.toEpochMilli) :| "stream of person is ordered"
+      }
+  }
 
   private val allProperties: List[PropF[F]] = List(
     personCreated,
     personRead,
-  ) // todo complete the list
+    personUpdate,
+    personDelete,
+    peopleStreamed,
+    peopleStreamedOrdered
+  )
 
   private val allResults: F[List[Test.Result]] = allProperties.traverse(_.check())
 
