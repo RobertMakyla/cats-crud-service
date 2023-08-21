@@ -11,7 +11,7 @@ object Sex extends Enum[Sex] {
 
   case object Female extends Sex
 
-  override val values: IndexedSeq[Sex] = findValues
+  override def values: IndexedSeq[Sex] = findValues
 
   implicit val sexEq: Eq[Sex] = Eq.by(_.entryName)
 }
