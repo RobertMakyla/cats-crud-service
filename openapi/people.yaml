@@ -16,13 +16,13 @@ paths:
             x-scala-type: org.robmaksoftware.domain.PersonId
           required: true
       responses:
-        '200':
+        200:
           description: person by id
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PersonDto'
-        '400':
+        400:
           $ref: '#/components/responses/NotFound'
 
   /people/api/all:
@@ -34,13 +34,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PersonDtos'
+                $ref: '#/components/schemas/PeopleDto'
 
 components:
 
   schemas:
 
-    PersonDtos:
+    PeopleDto:
       type: object
       required:
         - people
