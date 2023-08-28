@@ -75,7 +75,7 @@ components:
           x-scala-type: Double
         joined:
           type: number
-          x-scala-type: java.time.Instant
+          x-scala-type: Long
 
     ErrorResponse:
       type: object
