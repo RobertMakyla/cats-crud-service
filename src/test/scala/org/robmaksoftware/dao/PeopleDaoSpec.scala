@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.syntax.option._
-import org.robmaksoftware.domain.{Person, PersonId}
+import org.robmaksoftware.domain.{PersonWithId, Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
@@ -96,26 +96,26 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
 
     "Stream all" in { repo =>
 
-      val result: IO[List[Person]] = for {
+      val result: IO[List[PersonWithId]] = for {
         _ <- repo.add(p1)
         _ <- repo.add(p2)
         _ <- repo.add(p3)
         all <- repo.all.compile.toList
       } yield all
 
-      result.asserting(_ should contain theSameElementsAs List(p1, p2, p3))
+      result.asserting(_.map(_.person) should contain allElementsOf expectedRecords)
     }
 
     "Stream all order by joined" in { repo =>
 
-      val result: IO[List[Person]] = for {
+      val result: IO[List[PersonWithId]] = for {
         _ <- repo.add(p2)
         _ <- repo.add(p1)
         _ <- repo.add(p3)
         all <- repo.allOrderByJoined.compile.toList
       } yield all
 
-      result.asserting(_ shouldBe List(p1, p2, p3))
+      result.asserting(_.map(_.person).filter(expectedRecords.contains) shouldBe expectedRecords)
     }
 
   }
@@ -126,7 +126,9 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
   val p2 = Person("Jane", 38, Female, 10L, date.plusMillis(5))
   val p3 = Person("Mary", 25, Female, 10L, date.plusMillis(10))
 
+  val expectedRecords = List(p1, p2, p3)
 
-  override type FixtureParam = Dao[IO, PersonId, Person]
+
+  override type FixtureParam = Dao[IO, PersonId, Person, PersonWithId]
 
 }

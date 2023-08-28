@@ -13,17 +13,17 @@ import doobie.Transactor
 import doobie.implicits._
 import doobie.implicits.toSqlInterpolator
 import org.robmaksoftware.domain._
-import org.robmaksoftware.dao.Metas._
+import org.robmaksoftware.metas._
 
-trait PeopleDao[F[_]] extends Dao[F, PersonId, Person] {
+trait PeopleDao[F[_]] extends Dao[F, PersonId, Person, PersonWithId] {
 
   // Read
 
   def get(id: PersonId): F[Option[Person]]
 
-  def all: fs2.Stream[F, Person]
+  def all: fs2.Stream[F, PersonWithId]
 
-  def allOrderByJoined: fs2.Stream[F, Person]
+  def allOrderByJoined: fs2.Stream[F, PersonWithId]
 
   // Write
 
@@ -44,9 +44,9 @@ object PeopleDao {
 
       override def get(id: PersonId): F[Option[Person]] = dao.get(id).transact(xa)
 
-      override def all: fs2.Stream[F, Person] = dao.all.transact(xa)
+      override def all: fs2.Stream[F, PersonWithId] = dao.all.transact(xa)
 
-      override def allOrderByJoined: fs2.Stream[F, Person] = dao.allOrderByJoined.transact(xa)
+      override def allOrderByJoined: fs2.Stream[F, PersonWithId] = dao.allOrderByJoined.transact(xa)
 
       override def add(item: Person): F[PersonId] = dao.add(item).transact(xa)
 
@@ -74,17 +74,26 @@ object PeopleDao {
     private def newId: PersonId = PersonId(UUID.randomUUID().toString)
 
     override def get(id: PersonId): ConnectionIO[Option[Person]] =
-      sql"SELECT $valueColsFr FROM $tableNameFr ${whereId(id)} LIMIT 1".query[Person].option
+      sql"SELECT $valueColsFr FROM $tableNameFr ${whereId(id)} LIMIT 1"
+        .query[Person]
+        .option
 
-    override def all: fs2.Stream[ConnectionIO, Person] =
-      sql"SELECT $valueColsFr FROM $tableNameFr".query[Person].stream
+    override def all: fs2.Stream[ConnectionIO, PersonWithId] =
+      sql"SELECT ${Fragment.const(pk)}, $valueColsFr FROM $tableNameFr"
+        .query[PersonWithId]
+        .stream
 
-    override def allOrderByJoined: fs2.Stream[ConnectionIO, Person] =
-      sql"SELECT $valueColsFr FROM $tableNameFr ORDER BY joined".query[Person].stream
+    override def allOrderByJoined: fs2.Stream[ConnectionIO, PersonWithId] =
+      sql"SELECT ${Fragment.const(pk)}, $valueColsFr FROM $tableNameFr ORDER BY joined"
+        .query[PersonWithId]
+        .stream
 
     override def add(p: Person): ConnectionIO[PersonId] = {
       val id: PersonId = newId
-      sql"INSERT INTO $tableNameFr ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) ".update.run.map(_ => id)
+      sql"INSERT INTO $tableNameFr ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) "
+        .update
+        .run
+        .map(_ => id)
     }
 
     override def update(id: PersonId, p: Person): ConnectionIO[Int] =

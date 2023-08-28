@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit
 
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
-import org.robmaksoftware.domain.{DateCredits, Person, PersonId}
+import org.robmaksoftware.domain.{DateCredits, PersonWithId, Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.robmaksoftware.dao.Dao
 import org.scalatest.{FutureOutcome, Outcome}
@@ -27,6 +27,19 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
 
     "add" in { service =>
       service.add(p1).asserting(_.value.nonEmpty shouldBe true)
+    }
+
+    "get" in { service =>
+      val res = for {
+        id <- service.add(p1)
+        p <- service.get(id)
+        n <- service.get(PersonId("xx"))
+      } yield (p, n)
+
+      res.asserting{ res =>
+        res._1.get shouldBe p1
+        res._2.isEmpty shouldBe true
+      }
     }
 
     "count" in { service =>
@@ -51,7 +64,7 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
       res.asserting(_ shouldBe 60L)
     }
 
-    "return credits per day" in { service =>
+    "credits per day" in { service =>
       val res: IO[List[DateCredits]] = for {
         _ <- service.add(p1)
         _ <- service.add(p2)
@@ -67,13 +80,25 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
           )
       }
     }
+
+    "all" in { service =>
+      val res = for {
+        _ <- service.add(p1)
+        _ <- service.add(p2)
+        _ <- service.add(p3)
+        rr <- service.all.compile.toList
+      } yield rr
+
+      res.asserting(_.map(_.person) should contain allElementsOf List(p1, p2 ,p3))
+    }
+
   }
 
 
   type FixtureParam = PersonService[IO]
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
-    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO].use { dao: Dao[IO, PersonId, Person] =>
+    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO].use { dao: Dao[IO, PersonId, Person, PersonWithId] =>
       val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(new PersonService[IO](dao)))
       IO.fromFuture(IO(testResult.toFuture))
     }

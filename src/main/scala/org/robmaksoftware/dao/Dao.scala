@@ -6,28 +6,28 @@ import cats.effect.syntax.resource._
 import doobie.util.transactor.Transactor
 import org.robmaksoftware.dao.PeopleDao._
 import org.robmaksoftware.db.DbTransactor
-import org.robmaksoftware.domain.{Person, PersonId}
+import org.robmaksoftware.domain.{PersonWithId, Person, PersonId}
 
 import scala.collection.mutable.HashMap
 
-trait Dao[F[_], K, V] {
+trait Dao[F[_], Key, Value, KeyAndValue] {
 
-  def get(id: K): F[Option[V]]
+  def get(id: Key): F[Option[Value]]
 
-  def add(item: V): F[K]
+  def add(item: Value): F[Key]
 
-  def update(id: K, newItem: V): F[Int]
+  def update(id: Key, newItem: Value): F[Int]
 
-  def delete(id: K): F[Int]
+  def delete(id: Key): F[Int]
 
-  def all: fs2.Stream[F, V]
+  def all: fs2.Stream[F, KeyAndValue]
 
-  def allOrderByJoined: fs2.Stream[F, V]
+  def allOrderByJoined: fs2.Stream[F, KeyAndValue]
 }
 
 object Dao {
 
-  type DaoResource[F[_]] = Resource[F, Dao[F, PersonId, Person]]
+  type DaoResource[F[_]] = Resource[F, Dao[F, PersonId, Person, PersonWithId]]
 
 
   def inMemDao[F[_] : Sync]: DaoResource[F] =

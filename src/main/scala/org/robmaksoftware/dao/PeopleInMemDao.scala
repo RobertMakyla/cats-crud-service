@@ -7,12 +7,10 @@ import cats.effect.Sync
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import scala.collection.mutable.HashMap
-
-import org.robmaksoftware.domain.Person
-import org.robmaksoftware.domain.PersonId
+import org.robmaksoftware.domain.{PersonWithId, Person, PersonId}
 
 
-final case class PeopleInMemDao[F[_] : Sync](private val people: HashMap[PersonId, Person]) extends Dao[F, PersonId, Person] {
+final case class PeopleInMemDao[F[_] : Sync](private val people: HashMap[PersonId, Person]) extends Dao[F, PersonId, Person, PersonWithId] {
 
   private val F = Sync[F]
 
@@ -47,8 +45,12 @@ final case class PeopleInMemDao[F[_] : Sync](private val people: HashMap[PersonI
       res <- if (removedPersonOpt.nonEmpty) F.pure(1) else F.pure(0)
     } yield res
 
-  override def all: fs2.Stream[F, Person] = fs2.Stream.emits(people.values.toSeq)
+  override def all: fs2.Stream[F, PersonWithId] = fs2.Stream.emits(
+    people.toList.map( elem => PersonWithId(elem._1, elem._2))
+  )
 
-  override def allOrderByJoined: fs2.Stream[F, Person] = fs2.Stream.emits(people.values.toSeq.sortBy(_.joined))
+  override def allOrderByJoined: fs2.Stream[F, PersonWithId] = fs2.Stream.emits(
+    people.toList.map( elem => PersonWithId(elem._1, elem._2)).sortBy(_.person.joined)
+  )
 }
 

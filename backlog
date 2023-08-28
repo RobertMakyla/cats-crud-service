@@ -1,11 +1,12 @@
+--implement guardrail API (with Cats Validators)
 
 --wiring with http
 test simple reading
 
---generating http based on yamls
-guardrail
+-- plugin scalafmt ?what's that for
 
 -- cache (effectful?)
+
 -- config (in to learn excel there is the best type described)
 
 -- http logging

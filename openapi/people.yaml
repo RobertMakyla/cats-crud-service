@@ -1,0 +1,94 @@
+openapi: 3.0.1
+info:
+  title: People app
+  version: "1.0"
+  description: People simple app
+
+paths:
+  /people/api/person/{personId}:
+    get:
+      operationId: getPerson
+      parameters:
+        - name: personId
+          in: path
+          schema:
+            type: string
+            x-scala-type: org.robmaksoftware.domain.PersonId
+          required: true
+      responses:
+        '200':
+          description: person by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonDto'
+        '400':
+          $ref: '#/components/responses/NotFound'
+
+  /people/api/all:
+    get:
+      operationId: getAllPeople
+      responses:
+        '200':
+          description: all people
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonDtos'
+
+components:
+
+  schemas:
+
+    PersonDtos:
+      type: object
+      required:
+        - people
+      properties:
+        peopleInfos:
+          type: array
+          x-scala-array-type: List
+          items:
+            $ref: '#/components/schemas/PersonDto'
+
+    PersonDto:
+      type: object
+      required:
+        - id
+        - name
+        - age
+        - sex
+        - credit
+        - joined
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+          x-scala-type: Int
+        sex:
+          type: string
+        credit:
+          type: number
+          x-scala-type: Double
+        joined:
+          type: number
+          x-scala-type: java.time.Instant
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+  responses:
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

@@ -5,8 +5,7 @@ import cats.syntax.eq._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
-import org.robmaksoftware.domain.Person
-import org.robmaksoftware.domain.PersonId
+import org.robmaksoftware.domain.{PersonWithId, Person, PersonId}
 import org.scalacheck.Prop._
 import org.scalacheck.effect.PropF
 import org.scalacheck.effect.PropF.forAllF
@@ -15,7 +14,7 @@ import org.scalacheck.{Arbitrary, Test}
 import org.scalatest.matchers.should.Matchers
 
 class PeopleDaoGenProps[F[_] : MonadThrow](
-  dao: Dao[F, PersonId, Person]
+  dao: Dao[F, PersonId, Person, PersonWithId]
 )(
   implicit personArb: Arbitrary[(Person, Person)],
   personEq: Eq[Person],
@@ -93,7 +92,7 @@ class PeopleDaoGenProps[F[_] : MonadThrow](
         id2 <- dao.add(p2)
         res <- dao.all.compile.toList
       } yield {
-        List(p1, p2).forall(res.contains) :| "person records are streamed"
+        List(p1, p2).forall(res.map(_.person).contains) :| "person records are streamed"
       }
   }
 
@@ -106,8 +105,8 @@ class PeopleDaoGenProps[F[_] : MonadThrow](
         id2 <- dao.add(p2)
         res <- dao.allOrderByJoined.compile.toList
       } yield {
-        List(p1, p2).forall(res.contains) :| "person records are streamed" &&
-          (res.head.joined.toEpochMilli < res.last.joined.toEpochMilli) :| "stream of person is ordered"
+        List(p1, p2).forall(res.map(_.person).contains) :| "person records are streamed" &&
+          (res.head.person.joined.toEpochMilli < res.last.person.joined.toEpochMilli) :| "stream of person is ordered"
       }
   }
 

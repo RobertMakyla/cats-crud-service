@@ -1,0 +1,2 @@
+INSERT INTO people(id, name, age, sex, credit, joined) VALUES ('test-id-1', 'Adam', 35, 'Male', 100.15, '2021-12-31 10:30:45.123');
+INSERT INTO people(id, name, age, sex, credit, joined) VALUES ('test-id-2', 'Eve', 30, 'Female', 200.10, '2022-04-01 12:00:45.000');
