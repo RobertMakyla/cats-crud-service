@@ -45,7 +45,7 @@ components:
       required:
         - people
       properties:
-        peopleInfos:
+        people:
           type: array
           x-scala-array-type: List
           items:
