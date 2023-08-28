@@ -68,7 +68,7 @@ lazy val root = project
     Compile / guardrailTasks := List(
       ScalaServer(
         file("openapi/people.yaml"),
-        pkg = "org.robmaksoftware.people.http",
+        pkg = "org.robmaksoftware.http",
         framework = "http4s",
         tracing = false,
         customExtraction = false,

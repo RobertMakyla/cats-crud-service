@@ -1,7 +1,8 @@
---implement guardrail API (with Cats Validators)
+-- fix Validators
+-- add Spec for guardrail and http4s
 
 --wiring with http
-test simple reading
+manual test simple reading
 
 -- plugin scalafmt ?what's that for
 

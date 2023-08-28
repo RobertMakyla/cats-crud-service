@@ -16,18 +16,33 @@ paths:
             x-scala-type: org.robmaksoftware.domain.PersonId
           required: true
       responses:
-        200:
+        '200':
           description: person by id
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PersonDto'
-        400:
+        '400':
+          description: Bad request.
+        '404':
           description: Person not found.
 
   /people/api/all:
     get:
       operationId: getAllPeople
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            x-scala-type: Int
+          required: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            x-scala-type: Int
+          required: false
       responses:
         '200':
           description: all people
@@ -35,6 +50,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PeopleDto'
+        '400':
+          description: Bad request.
 
 components:
 

@@ -10,7 +10,7 @@ import org.robmaksoftware.dao.Dao
 final class PersonService[F[_] : Functor](
   dao: Dao[F, PersonId, Person, PersonWithId]
 )(
-  implicit compiler: fs2.Compiler[F, F] // required for fs2.Stream
+  implicit compiler: fs2.Compiler[F, F] // required for compiling fs2.Stream
 ) {
 
   def add(p: Person): F[PersonId] = dao.add(p)
@@ -41,6 +41,11 @@ final class PersonService[F[_] : Functor](
         DateCredits(epochday, chunk.size, totalCredit)
       }
 
-  def all: fs2.Stream[F, PersonWithId] = dao.all
+
+  def all(offset: Int, limit: Int): fs2.Stream[F, PersonWithId] =
+    dao
+      .allOrderByJoined
+      .drop(offset)
+      .take(limit)
 
 }
