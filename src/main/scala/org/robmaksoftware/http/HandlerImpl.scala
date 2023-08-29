@@ -28,8 +28,7 @@ class HandlerImpl[F[_] : Monad](
         limit.traverse(validateIsSmallerOrEqual(maxLimit, _))
       )
 
-
-    val validatedOk: ValidatedNel[String, F[HttpResource.GetAllPeopleResponse]] = validatedParams.mapN((validOffset, validLimit) =>
+    val validatedResponse: ValidatedNel[String, F[HttpResource.GetAllPeopleResponse]] = validatedParams.mapN((validOffset, validLimit) =>
       service
         .all(validOffset.getOrElse(0), validLimit.getOrElse(maxLimit))
         .compile
@@ -39,8 +38,7 @@ class HandlerImpl[F[_] : Monad](
         }
     )
 
-    validatedOk.fold(errors => Monad[F].pure(HttpResource.GetAllPeopleResponse.BadRequest(errors.toList.mkString("; "))), identity)
-
+    validatedResponse.fold(errors => Monad[F].pure(HttpResource.GetAllPeopleResponse.BadRequest(errors.toList.mkString("; "))), identity)
   }
 
   override def getPerson(respond: HttpResource.GetPersonResponse.type)(personId: PersonId): F[HttpResource.GetPersonResponse] = {
