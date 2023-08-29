@@ -1,4 +1,3 @@
--- fix Validators
 -- add Spec for guardrail and http4s
 
 --wiring with http

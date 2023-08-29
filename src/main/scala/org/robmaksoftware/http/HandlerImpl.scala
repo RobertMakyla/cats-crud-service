@@ -1,59 +1,62 @@
 package org.robmaksoftware.http
 
 import cats.Monad
-import cats.syntax.applicative._
-import cats.syntax.contravariantSemigroupal._
+import cats.syntax.apply._ // for mapN
 import cats.syntax.functor._
-import cats.syntax.monad._
 import cats.syntax.traverse._
 import org.robmaksoftware.domain.{PersonId, PersonWithId}
 import org.robmaksoftware.http.definitions.PeopleDto
 import org.robmaksoftware.service.PersonService
 import org.robmaksoftware.http.{Resource => HttpResource}
 import Converters._
-import cats.data.{Validated, ValidatedNec}
-import org.robmaksoftware.http.Resource.GetAllPeopleResponse
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
 
 class HandlerImpl[F[_] : Monad](
   service: PersonService[F]
 )(
   implicit compiler: fs2.Compiler[F, F] // required for compiling fs2.Stream
-) extends Handler[F] {
+)
+  extends Handler[F] with Validators {
 
   val maxLimit = 500
 
-  override def getAllPeople(respond: HttpResource.GetAllPeopleResponse.type)(offset: Option[Int], limit: Option[Int]): F[HttpResource.GetAllPeopleResponse] =
+  override def getAllPeople(respond: HttpResource.GetAllPeopleResponse.type)(offset: Option[Int], limit: Option[Int]): F[HttpResource.GetAllPeopleResponse] = {
 
-    (
-      offset.traverse(validateIsGreaterOrEqual(0, _))
-      ,
-      limit.traverse(validateIsSmallerOrEqual(maxLimit, _))
-    ).mapN{ (validOffset, validLimit) =>
-      val xxx: F[GetAllPeopleResponse.Ok] = service
+    val validatedParams: (ValidatedNel[String, Option[Int]], ValidatedNel[String, Option[Int]]) =
+      (
+        offset.traverse(validateIsGreaterOrEqual(0, _))
+        ,
+        limit.traverse(validateIsSmallerOrEqual(maxLimit, _))
+      )
+
+
+    val validatedOk: ValidatedNel[String, F[HttpResource.GetAllPeopleResponse]] = validatedParams.mapN((validOffset, validLimit) =>
+      service
         .all(validOffset.getOrElse(0), validLimit.getOrElse(maxLimit))
         .compile
         .toList
         .map { ls: List[PersonWithId] =>
           HttpResource.GetAllPeopleResponse.Ok(PeopleDto(ls.map(_.toDto)))
         }
-      xxx
-    }.fold{ _ => GetAllPeopleResponse.BadRequest , identity }
+    )
 
+    validatedOk.fold(errors => Monad[F].pure(HttpResource.GetAllPeopleResponse.BadRequest(errors.toList.mkString("; "))), identity)
 
-  override def getPerson(respond: HttpResource.GetPersonResponse.type)(personId: PersonId): F[HttpResource.GetPersonResponse] =
-    ???
-  //    validatePersonId(personId).fla
-  //    service.get(personId).map {
-  //      case Some(p) => HttpResource.GetPersonResponse.Ok(p.toDtoWithId(personId))
-  //      case None => HttpResource.GetPersonResponse.NotFound
-  //    }
+  }
 
+  override def getPerson(respond: HttpResource.GetPersonResponse.type)(personId: PersonId): F[HttpResource.GetPersonResponse] = {
 
-  def validateIsGreaterOrEqual(min: Int, value: Int) = Validated.condNec(value >= min, value, s"$value is less than min value $min")
+    val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.GetPersonResponse]] = validateIsNonEmpty(personId)
+      .map { validPersonId =>
 
-  def validateIsSmallerOrEqual(max: Int, value: Int) = Validated.condNec(value <= max, value, s"$value is greater than max value $max")
+        service.get(validPersonId).map {
+          case Some(p) => HttpResource.GetPersonResponse.Ok(p.toDtoWithId(personId))
+          case None => HttpResource.GetPersonResponse.NotFound
+        }
+      }
 
-  def validatePersonId(id: => PersonId)  = Validated.condNec(id.value.nonEmpty, id, "ID is empty")
+    validatedResponse.fold(errors => Monad[F].pure(HttpResource.GetPersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
+  }
 
 
 }

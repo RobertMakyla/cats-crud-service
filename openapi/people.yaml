@@ -23,7 +23,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PersonDto'
         '400':
-          description: Bad request.
+          $ref: '#/components/responses/BadRequest'
         '404':
           description: Person not found.
 
@@ -51,7 +51,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PeopleDto'
         '400':
-          description: Bad request.
+          $ref: '#/components/responses/BadRequest'
 
 components:
 
@@ -93,3 +93,11 @@ components:
         joined:
           type: number
           x-scala-type: Long
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: string
