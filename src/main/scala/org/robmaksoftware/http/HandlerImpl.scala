@@ -24,8 +24,7 @@ class HandlerImpl[F[_] : Monad](
 
     val validatedParams: (ValidatedNel[String, Option[Int]], ValidatedNel[String, Option[Int]]) =
       (
-        offset.traverse(validateIsGreaterOrEqual(0, _))
-        ,
+        offset.traverse(validateIsGreaterOrEqual(0, _)),
         limit.traverse(validateIsSmallerOrEqual(maxLimit, _))
       )
 
