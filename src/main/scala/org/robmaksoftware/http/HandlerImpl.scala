@@ -49,7 +49,7 @@ class HandlerImpl[F[_] : Monad](
       .map { validPersonId =>
 
         service.get(validPersonId).map {
-          case Some(p) => HttpResource.GetPersonResponse.Ok(p.toDtoWithId(personId))
+          case Some(person) => HttpResource.GetPersonResponse.Ok(person.toDtoWithId(validPersonId))
           case None => HttpResource.GetPersonResponse.NotFound
         }
       }
