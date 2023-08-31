@@ -36,7 +36,7 @@ object Dao {
     }.toResource
 
 
-  def dbDao[F[_] : MonadCancelThrow : Async]: DaoResource[F] =
+  def sqliteDao[F[_] : MonadCancelThrow : Async]: DaoResource[F] =
     for {
       implicit0(xa: Transactor[F]) <- DbTransactor.sqlite(flywayMigration = true) // implicit0 comes from plugin: https://github.com/oleg-py/better-monadic-for
     } yield PeopleDao.makeDao.to[F]
