@@ -89,7 +89,7 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
         rr <- service.all(1,1).compile.toList
       } yield rr
 
-      res.asserting(_.map(_.person) should contain allElementsOf List(p2))
+      res.asserting(_.map(_.person) should contain theSameElementsAs List(p2))
     }
 
   }
