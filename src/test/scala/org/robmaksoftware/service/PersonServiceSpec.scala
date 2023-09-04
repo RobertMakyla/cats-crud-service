@@ -98,8 +98,8 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
   type FixtureParam = PersonService[IO]
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
-    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO].use { dao: Dao[IO, PersonId, Person, PersonWithId] =>
-      val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(new PersonService[IO](dao)))
+    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO]().use { dao: Dao[IO, PersonId, Person, PersonWithId] =>
+      val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(PersonService.apply[IO](dao)))
       IO.fromFuture(IO(testResult.toFuture))
     }
     new FutureOutcome(ioOutcome.unsafeToFuture())

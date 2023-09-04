@@ -30,9 +30,9 @@ object Dao {
   type DaoResource[F[_]] = Resource[F, Dao[F, PersonId, Person, PersonWithId]]
 
 
-  def inMemDao[F[_] : Sync]: DaoResource[F] =
+  def inMemDao[F[_] : Sync](data: HashMap[PersonId, Person] = HashMap.empty): DaoResource[F] =
     Sync[F].delay {
-      new PeopleInMemDao[F](HashMap.empty)
+      new PeopleInMemDao[F](data)
     }.toResource
 
 
