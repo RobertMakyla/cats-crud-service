@@ -28,8 +28,8 @@ lazy val root = project
       // http4s - http for scala powered by Cats
       "org.http4s" %% "http4s-circe" % http4sVersion,
       "org.http4s" %% "http4s-dsl" % http4sVersion,
-      "org.http4s" %% "http4s-blaze-client" % http4sVersion,
-      "org.http4s" %% "http4s-blaze-server" % http4sVersion,
+      "org.http4s" %% "http4s-ember-server"        % http4sVersion,
+      "org.http4s" %% "http4s-ember-client"        % http4sVersion,
 
       // streams fs2
       "co.fs2" %% "fs2-core" % "3.7.0",

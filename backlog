@@ -1,6 +1,5 @@
-
---wiring with http
-manual test simple reading
+-- http/db logging
+-- fix GET person by ID
 
 -- plugin scalafmt ?what's that for
 
@@ -8,7 +7,6 @@ manual test simple reading
 
 -- config (in to learn excel there is the best type described)
 
--- http logging
 -- doobie logging
 
 --last but not least
