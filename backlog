@@ -1,13 +1,10 @@
--- http/db logging
--- fix GET person by ID
+-- http/db-doobie logging
 
 -- plugin scalafmt ?what's that for
 
 -- cache (effectful?)
 
 -- config (in to learn excel there is the best type described)
-
--- doobie logging
 
 --last but not least
 update readme and app name on github
