@@ -1,3 +1,5 @@
+-- ADDING HTTP API (post = create, put = update, delete)
+
 -- http/db-doobie logging
 
 -- plugin scalafmt ?what's that for
