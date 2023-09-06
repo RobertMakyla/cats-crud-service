@@ -42,6 +42,19 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
       }
     }
 
+    "delete" in { service =>
+      val res = for {
+        id <- service.add(p1)
+        i <- service.delete(id)
+        n <- service.get(id)
+      } yield (i, n)
+
+      res.asserting{ res =>
+        res._1 shouldBe 1
+        res._2.isEmpty shouldBe true
+      }
+    }
+
     "count" in { service =>
       val res = for {
         _ <- service.add(p1)

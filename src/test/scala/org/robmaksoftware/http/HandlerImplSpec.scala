@@ -27,7 +27,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       val res = handler.getPerson(HttpResource.GetPersonResponse)(PersonId(""))
 
       res.asserting {
-        _ shouldBe HttpResource.GetPersonResponse.BadRequest("ID is empty")
+        _ shouldBe HttpResource.GetPersonResponse.BadRequest("person ID is empty")
       }
     }
 
@@ -48,24 +48,51 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
     }
   }
 
+  "deletePerson" - {
+
+    "returns Bad Request for empty ID" in { handler =>
+      val res = handler.deletePerson(HttpResource.DeletePersonResponse)(PersonId(""))
+
+      res.asserting {
+        _ shouldBe HttpResource.DeletePersonResponse.BadRequest("person ID is empty")
+      }
+    }
+
+    "returns Not Found for nonexisting ID" in { handler =>
+      val res = handler.deletePerson(HttpResource.DeletePersonResponse)(PersonId("x"))
+
+      res.asserting {
+        _ shouldBe HttpResource.DeletePersonResponse.NotFound
+      }
+    }
+
+    "returns OK for deleted entry" in { handler =>
+      val res = handler.deletePerson(HttpResource.DeletePersonResponse)(id(2))
+
+      res.asserting {
+        _ shouldBe HttpResource.DeletePersonResponse.Ok
+      }
+    }
+  }
+
   "getAllPeople" - {
 
     "returns Bad Request for incorrect offset" in { handler =>
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = -1.some)
-        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("-1 < 0"))
+        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("offset is too small: -1 < 0"))
     }
 
     "returns Bad Request for incorrect limit" in { handler =>
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(limit = 999.some)
-        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("999 > 500"))
+        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("limit is too big: 999 > 500"))
     }
 
     "returns Bad Request for all kinds of incorrect params" in { handler =>
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = -1.some, limit = 999.some)
-        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("-1 < 0; 999 > 500"))
+        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("offset is too small: -1 < 0; limit is too big: 999 > 500"))
     }
 
     "returns OK with pagination" in { handler =>

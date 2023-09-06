@@ -1,4 +1,4 @@
--- ADDING HTTP API (post = create, put = update, delete)
+-- ADDING HTTP API (post = create, put = update)
 
 -- http/db-doobie logging
 

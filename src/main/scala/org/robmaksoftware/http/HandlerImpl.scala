@@ -24,8 +24,8 @@ class HandlerImpl[F[_] : Monad](
 
     val validatedParams: (ValidatedNel[String, Option[Int]], ValidatedNel[String, Option[Int]]) =
       (
-        offset.traverse(validateIsGreaterOrEqual(0, _)),
-        limit.traverse(validateIsSmallerOrEqual(maxLimit, _))
+        offset.traverse(validateIsGreaterOrEqual("offset", 0, _)),
+        limit.traverse(validateIsSmallerOrEqual("limit", maxLimit, _))
       )
 
     val validatedResponse: ValidatedNel[String, F[HttpResource.GetAllPeopleResponse]] = validatedParams.mapN((validOffset, validLimit) =>
@@ -43,11 +43,11 @@ class HandlerImpl[F[_] : Monad](
 
   override def getPerson(respond: HttpResource.GetPersonResponse.type)(personId: PersonId): F[HttpResource.GetPersonResponse] = {
 
-    val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.GetPersonResponse]] = validateIsNonEmpty(personId)
-      .map { validPersonId =>
+    val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.GetPersonResponse]] = validateIsNonEmpty("person ID" , personId.value)
+      .map { _ =>
 
-        service.get(validPersonId).map {
-          case Some(person) => HttpResource.GetPersonResponse.Ok(person.toDtoWithId(validPersonId))
+        service.get(personId).map {
+          case Some(person) => HttpResource.GetPersonResponse.Ok(person.toDtoWithId(personId))
           case None => HttpResource.GetPersonResponse.NotFound
         }
       }
@@ -55,5 +55,17 @@ class HandlerImpl[F[_] : Monad](
     validatedResponse.fold(errors => Monad[F].pure(HttpResource.GetPersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
   }
 
+  def deletePerson(respond: HttpResource.DeletePersonResponse.type)(personId: org.robmaksoftware.domain.PersonId): F[HttpResource.DeletePersonResponse] = {
+
+    val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.DeletePersonResponse]] = validateIsNonEmpty("person ID" , personId.value)
+      .map { _ =>
+        service.delete(personId).map { deletedRows: Int =>
+          if (deletedRows > 0) HttpResource.DeletePersonResponse.Ok else HttpResource.DeletePersonResponse.NotFound
+        }
+      }
+
+    validatedResponse.fold(errors => Monad[F].pure(HttpResource.DeletePersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
+
+  }
 
 }

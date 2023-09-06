@@ -13,6 +13,8 @@ abstract class PersonService[F[_]] {
 
   def get(id: PersonId): F[Option[Person]]
 
+  def delete(id: PersonId): F[Int]
+
   def count: F[Long]
 
   def sumCredits: F[Double]
@@ -63,6 +65,7 @@ object PersonService {
         .drop(offset)
         .take(limit)
 
+    def delete(id: PersonId): F[Int] = dao.delete(id)
   }
 
 }

@@ -5,9 +5,12 @@ import org.robmaksoftware.domain.PersonId
 
 trait Validators {
 
-  def validateIsGreaterOrEqual(min: Int, value: Int): ValidatedNel[String, Int] = Validated.condNel(value >= min, value, s"$value < $min")
+  def validateIsGreaterOrEqual(paramName: String, min: Int, value: Int): ValidatedNel[String, Int] =
+    Validated.condNel(value >= min, value, s"$paramName is too small: $value < $min")
 
-  def validateIsSmallerOrEqual(max: Int, value: Int): ValidatedNel[String, Int] = Validated.condNel(value <= max, value, s"$value > $max")
+  def validateIsSmallerOrEqual(paramName: String, max: Int, value: Int): ValidatedNel[String, Int] =
+    Validated.condNel(value <= max, value, s"$paramName is too big: $value > $max")
 
-  def validateIsNonEmpty(id: => PersonId): ValidatedNel[String, PersonId] = Validated.condNel(id.value.nonEmpty, id, "ID is empty")
+  def validateIsNonEmpty(paramName: String, id: => String): ValidatedNel[String, String] =
+    Validated.condNel(id.nonEmpty, id, s"$paramName is empty")
 }
