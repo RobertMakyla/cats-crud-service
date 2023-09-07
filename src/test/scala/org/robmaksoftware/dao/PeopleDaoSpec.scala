@@ -12,11 +12,9 @@ import org.scalatest.matchers.should.Matchers
 
 abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
-
   "PeopleDao should" - {
 
     "Create with unique ID" in { repo =>
-
       val result = for {
         id1 <- repo.add(p1)
         id2 <- repo.add(p1)
@@ -31,12 +29,11 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
     }
 
     "Read" in { repo =>
-
       val result = for {
         id1 <- repo.add(p1)
-        _ <- repo.add(p2)
-        p <- repo.get(id1)
-        n <- repo.get(PersonId("X"))
+        _   <- repo.add(p2)
+        p   <- repo.get(id1)
+        n   <- repo.get(PersonId("X"))
       } yield (p, n)
 
       result.asserting { res =>
@@ -47,11 +44,10 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
     }
 
     "Update existing Person" in { repo =>
-
       val result = for {
         id1 <- repo.add(p1)
-        i <- repo.update(id1, p2)
-        p <- repo.get(id1)
+        i   <- repo.update(id1, p2)
+        p   <- repo.get(id1)
       } yield (i, p)
 
       result.asserting { res =>
@@ -62,11 +58,10 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
     }
 
     "Update non-existing Person" in { repo =>
-
       val result = for {
         id1 <- repo.add(p1)
-        i <- repo.update(PersonId("X"), p2)
-        p <- repo.get(id1)
+        i   <- repo.update(PersonId("X"), p2)
+        p   <- repo.get(id1)
       } yield (i, p)
 
       result.asserting { res =>
@@ -78,12 +73,11 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
     }
 
     "Delete" in { repo =>
-
       val result = for {
         id1 <- repo.add(p1)
-        _ <- repo.add(p2)
-        i <- repo.delete(id1)
-        n <- repo.get(id1)
+        _   <- repo.add(p2)
+        i   <- repo.delete(id1)
+        n   <- repo.get(id1)
       } yield (i, n)
 
       result.asserting { res =>
@@ -93,13 +87,11 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
       }
     }
 
-
     "Stream all" in { repo =>
-
       val result: IO[List[PersonWithId]] = for {
-        _ <- repo.add(p1)
-        _ <- repo.add(p2)
-        _ <- repo.add(p3)
+        _   <- repo.add(p1)
+        _   <- repo.add(p2)
+        _   <- repo.add(p3)
         all <- repo.all.compile.toList
       } yield all
 
@@ -107,11 +99,10 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
     }
 
     "Stream all order by joined" in { repo =>
-
       val result: IO[List[PersonWithId]] = for {
-        _ <- repo.add(p2)
-        _ <- repo.add(p1)
-        _ <- repo.add(p3)
+        _   <- repo.add(p2)
+        _   <- repo.add(p1)
+        _   <- repo.add(p3)
         all <- repo.allOrderByJoined.compile.toList
       } yield all
 
@@ -127,7 +118,6 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
   val p3 = Person("Mary", 25, Female, 10L, date.plusMillis(10))
 
   val expectedRecords = List(p1, p2, p3)
-
 
   override type FixtureParam = Dao[IO, PersonId, Person, PersonWithId]
 

@@ -6,24 +6,23 @@ import org.robmaksoftware.http.definitions.PersonDto
 
 object Converters {
 
-
   implicit class PersonOps(p: Person) {
 
     def toDto: PersonDto =
       PersonDto(
-        name = p.name,
-        age = p.age,
-        sex = p.sex.entryName,
+        name   = p.name,
+        age    = p.age,
+        sex    = p.sex.entryName,
         credit = p.credit,
         joined = p.joined.toEpochMilli
       )
 
     def toDtoWithId(id: PersonId): PersonWithIdDto =
       PersonWithIdDto(
-        id = id.value,
-        name = p.name,
-        age = p.age,
-        sex = p.sex.entryName,
+        id     = id.value,
+        name   = p.name,
+        age    = p.age,
+        sex    = p.sex.entryName,
         credit = p.credit,
         joined = p.joined.toEpochMilli
       )
@@ -33,6 +32,5 @@ object Converters {
 
     def toDto: PersonWithIdDto = p.person.toDtoWithId(p.id)
   }
-
 
 }

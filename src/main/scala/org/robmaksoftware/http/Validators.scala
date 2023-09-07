@@ -12,7 +12,7 @@ trait Validators {
   // Ints
 
   def validateRange(paramName: String, min: Int, max: Int, value: Int): ValidatedNel[String, Int] =
-    validateIsGreaterOrEqual(paramName, min, value).andThen(_ => validateIsSmallerOrEqual(paramName, max, value) )
+    validateIsGreaterOrEqual(paramName, min, value).andThen(_ => validateIsSmallerOrEqual(paramName, max, value))
 
   def validateIsGreaterOrEqual(paramName: String, min: Int, value: Int): ValidatedNel[String, Int] =
     Validated.condNel(value >= min, value, s"$paramName is too small: $value < $min")
@@ -27,7 +27,10 @@ trait Validators {
   // Sex
   def validateSex(s: => String): ValidatedNel[String, Sex] =
     Validated
-      .fromOption(Sex.withNameInsensitiveOption(s), NonEmptyList(s"Sex $s is not ${Sex.values.toList.mkString("[","; ","]")}", Nil))
+      .fromOption(
+        Sex.withNameInsensitiveOption(s),
+        NonEmptyList(s"Sex $s is not ${Sex.values.toList.mkString("[", "; ", "]")}", Nil)
+      )
 
   // Instant
   def validateInstant(paramName: String, value: Long): ValidatedNel[String, Instant] =

@@ -28,8 +28,8 @@ abstract class PersonService[F[_]] {
 
 object PersonService {
 
-  def apply[F[_] : Functor](dao: Dao[F, PersonId, Person, PersonWithId])(
-    implicit compiler: fs2.Compiler[F, F] // required for compiling fs2.Stream
+  def apply[F[_]: Functor](dao: Dao[F, PersonId, Person, PersonWithId])(implicit
+      compiler: fs2.Compiler[F, F] // required for compiling fs2.Stream
   ) = new PersonService[F] {
 
     def add(p: Person): F[PersonId] = dao.add(p)
@@ -39,31 +39,25 @@ object PersonService {
     def count: F[Long] = dao.all.compile.count
 
     def sumCredits: F[Double] =
-      dao
-        .all
+      dao.all
         .scan(0d)(_ + _.person.credit)
         .compile
         .last
         .map(_.getOrElse(0d))
 
     def creditsPerDate: fs2.Stream[F, DateCredits] =
-      dao
-        .allOrderByJoined
+      dao.allOrderByJoined
         .groupAdjacentBy(_.person.joined.truncatedTo(ChronoUnit.DAYS))
         .map { case (epochday, chunk) =>
-
-          val totalCredit = chunk
-            .toList
+          val totalCredit = chunk.toList
             .map(_.person.credit)
             .sum
 
           DateCredits(epochday, chunk.size, totalCredit)
         }
 
-
     def all(offset: Int, limit: Int): fs2.Stream[F, PersonWithId] =
-      dao
-        .allOrderByJoined
+      dao.allOrderByJoined
         .drop(offset)
         .take(limit)
 

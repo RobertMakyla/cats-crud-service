@@ -15,16 +15,14 @@ import org.scalatest.matchers.should.Matchers
 
 class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
-
   "PersonService should" - {
 
-    val date = Instant.ofEpochMilli(12345)
+    val date     = Instant.ofEpochMilli(12345)
     val nextDate = date.plus(1, ChronoUnit.DAYS)
 
     val p1 = Person("Robert", 37, Male, 10L, date)
     val p2 = Person("Jane", 38, Female, 20L, nextDate.plusMillis(123))
     val p3 = Person("Mary", 25, Female, 30L, nextDate.plusMillis(456))
-
 
     "add" in { service =>
       service.add(p1).asserting(_.value.nonEmpty shouldBe true)
@@ -33,11 +31,11 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
     "get" in { service =>
       val res = for {
         id <- service.add(p1)
-        p <- service.get(id)
-        n <- service.get(PersonId("xx"))
+        p  <- service.get(id)
+        n  <- service.get(PersonId("xx"))
       } yield (p, n)
 
-      res.asserting{ res =>
+      res.asserting { res =>
         res._1 shouldBe p1.some
         res._2.isEmpty shouldBe true
       }
@@ -46,11 +44,11 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
     "delete" in { service =>
       val res = for {
         id <- service.add(p1)
-        i <- service.delete(id)
-        n <- service.get(id)
+        i  <- service.delete(id)
+        n  <- service.get(id)
       } yield (i, n)
 
-      res.asserting{ res =>
+      res.asserting { res =>
         res._1 shouldBe 1
         res._2.isEmpty shouldBe true
       }
@@ -59,11 +57,11 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
     "update" in { service =>
       val res = for {
         id <- service.add(p1)
-        i <- service.update(id, p2)
-        p <- service.get(id)
+        i  <- service.update(id, p2)
+        p  <- service.get(id)
       } yield (i, p)
 
-      res.asserting{ res =>
+      res.asserting { res =>
         res._1 shouldBe 1
         res._2 shouldBe p2.some
       }
@@ -82,9 +80,9 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
 
     "sum credits" in { service =>
       val res = for {
-        _ <- service.add(p1)
-        _ <- service.add(p2)
-        _ <- service.add(p3)
+        _   <- service.add(p1)
+        _   <- service.add(p2)
+        _   <- service.add(p3)
         sum <- service.sumCredits
       } yield sum
 
@@ -93,9 +91,9 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
 
     "credits per day" in { service =>
       val res: IO[List[DateCredits]] = for {
-        _ <- service.add(p1)
-        _ <- service.add(p2)
-        _ <- service.add(p3)
+        _           <- service.add(p1)
+        _           <- service.add(p2)
+        _           <- service.add(p3)
         dateCredits <- service.creditsPerDate.compile.toList
       } yield dateCredits
 
@@ -110,17 +108,16 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
 
     "all" in { service =>
       val res = for {
-        _ <- service.add(p1)
-        _ <- service.add(p2)
-        _ <- service.add(p3)
-        rr <- service.all(1,1).compile.toList
+        _  <- service.add(p1)
+        _  <- service.add(p2)
+        _  <- service.add(p3)
+        rr <- service.all(1, 1).compile.toList
       } yield rr
 
       res.asserting(_.map(_.person) should contain theSameElementsAs List(p2))
     }
 
   }
-
 
   type FixtureParam = PersonService[IO]
 

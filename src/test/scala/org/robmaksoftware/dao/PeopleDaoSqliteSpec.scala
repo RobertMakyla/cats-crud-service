@@ -14,7 +14,6 @@ class PeopleDaoSqliteSpec extends PeopleDaoSpec {
     new FutureOutcome(ioOutcome.unsafeToFuture())
   }
 
-
   /*
 
   // when Fixture in not wrapped in Resource :
@@ -24,5 +23,5 @@ class PeopleDaoSqliteSpec extends PeopleDaoSpec {
     new FutureOutcome(test(repo).toFuture)
   }
 
-  */
+   */
 }

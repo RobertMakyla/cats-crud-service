@@ -37,10 +37,9 @@ trait PeopleDao[F[_]] extends Dao[F, PersonId, Person, PersonWithId] {
 
 object PeopleDao {
 
-
   implicit class PeopleDaoOps(dao: PeopleDao[doobie.ConnectionIO]) {
 
-    def to[F[_] : MonadCancelThrow](implicit xa: Transactor[F]): PeopleDao[F] = new PeopleDao[F] {
+    def to[F[_]: MonadCancelThrow](implicit xa: Transactor[F]): PeopleDao[F] = new PeopleDao[F] {
 
       override def get(id: PersonId): F[Option[Person]] = dao.get(id).transact(xa)
 
@@ -56,16 +55,15 @@ object PeopleDao {
     }
   }
 
-  private val tableName = "PEOPLE"
-  private val tableNameFr = Fragment.const(tableName)
-  private val pk = "id"
-  private val valueCols = List("name", "age", "sex", "credit", "joined")
+  private val tableName         = "PEOPLE"
+  private val tableNameFr       = Fragment.const(tableName)
+  private val pk                = "id"
+  private val valueCols         = List("name", "age", "sex", "credit", "joined")
   private val valueColsToUpdate = valueCols.map(col => s"$col = ?").mkString(", ")
-  private val valueColsFr = Fragment.const(valueCols.mkString(", "))
-  private val allColsFr = Fragment.const((pk :: valueCols).mkString(", "))
+  private val valueColsFr       = Fragment.const(valueCols.mkString(", "))
+  private val allColsFr         = Fragment.const((pk :: valueCols).mkString(", "))
 
   private def whereId(id: PersonId): Fragment = Fragments.whereAnd(fr"id = $id")
-
 
   def makeDao: PeopleDao[doobie.ConnectionIO] = new PeopleDao[ConnectionIO] {
 
@@ -90,9 +88,7 @@ object PeopleDao {
 
     override def add(p: Person): ConnectionIO[PersonId] = {
       val id: PersonId = newId
-      sql"INSERT INTO $tableNameFr ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) "
-        .update
-        .run
+      sql"INSERT INTO $tableNameFr ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) ".update.run
         .map(_ => id)
     }
 

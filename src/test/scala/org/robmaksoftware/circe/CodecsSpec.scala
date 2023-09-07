@@ -23,7 +23,7 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
 
     decodedPersonId match {
       case Right(resultPersonId) => resultPersonId shouldBe personId
-      case Left(error) => fail(s"Decoding error: $error")
+      case Left(error)           => fail(s"Decoding error: $error")
     }
   }
 }

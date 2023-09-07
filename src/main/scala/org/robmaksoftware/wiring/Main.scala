@@ -13,13 +13,14 @@ object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
 
     val server: Resource[IO, Unit] = for {
-      dao  <- Dao.sqliteDao[IO]
+      dao <- Dao.sqliteDao[IO]
 
-      service = PersonService(dao)
+      service     = PersonService(dao)
       httpHandler = new HandlerImpl(service)
-      routes = new HttpResource[IO]().routes(httpHandler)
+      routes      = new HttpResource[IO]().routes(httpHandler)
 
-      defaultServerBuilder = EmberServerBuilder.default[IO]
+      defaultServerBuilder = EmberServerBuilder
+        .default[IO]
         .withHttpApp(routes.orNotFound)
 
       serverBuilder = Port.fromInt(8080).fold(defaultServerBuilder)(defaultServerBuilder.withPort)

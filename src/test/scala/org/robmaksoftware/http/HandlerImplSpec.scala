@@ -20,7 +20,6 @@ import org.robmaksoftware.http.definitions.PeopleDto
 
 class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
-
   "get by ID" - {
 
     "returns Bad Request for empty ID" in { handler =>
@@ -92,25 +91,39 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
     "returns Bad Request for all kinds of incorrect params" in { handler =>
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = -1.some, limit = 999.some)
-        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("offset is too small: -1 < 0; limit is too big: 999 > 500"))
+        .asserting(
+          _ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("offset is too small: -1 < 0; limit is too big: 999 > 500")
+        )
     }
 
     "returns OK with pagination" in { handler =>
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = 1.some, limit = 1.some)
-        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.Ok(PeopleDto(List(
-          p2.toDtoWithId(id(2))
-        ))))
+        .asserting(
+          _ shouldBe HttpResource.GetAllPeopleResponse.Ok(
+            PeopleDto(
+              List(
+                p2.toDtoWithId(id(2))
+              )
+            )
+          )
+        )
     }
 
     "returns OK without pagination" in { handler =>
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)()
-        .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.Ok(PeopleDto(List(
-          p1.toDtoWithId(id(1)),
-          p2.toDtoWithId(id(2)),
-          p3.toDtoWithId(id(3))
-        ))))
+        .asserting(
+          _ shouldBe HttpResource.GetAllPeopleResponse.Ok(
+            PeopleDto(
+              List(
+                p1.toDtoWithId(id(1)),
+                p2.toDtoWithId(id(2)),
+                p3.toDtoWithId(id(3))
+              )
+            )
+          )
+        )
     }
   }
 

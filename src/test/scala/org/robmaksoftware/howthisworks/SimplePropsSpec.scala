@@ -5,7 +5,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks._
 
-class SimplePropsSpec extends AnyFreeSpec with Matchers{
+class SimplePropsSpec extends AnyFreeSpec with Matchers {
 
   type TwoInts = (Int, Int)
 
@@ -16,12 +16,11 @@ class SimplePropsSpec extends AnyFreeSpec with Matchers{
 
   implicit val smallBigIntArbitrary: Arbitrary[TwoInts] = Arbitrary(smallBigIntGen)
 
-
   "first int is smaller" in {
 
     forAll { smallBig: (Int, Int) =>
       val small = smallBig._1
-      val big = smallBig._2
+      val big   = smallBig._2
 
       small should be < big
     }
@@ -31,7 +30,7 @@ class SimplePropsSpec extends AnyFreeSpec with Matchers{
 
     forAll { smallBig: (Int, Int) =>
       val small = smallBig._1
-      val big = smallBig._2
+      val big   = smallBig._2
 
       small should not equal big
     }
