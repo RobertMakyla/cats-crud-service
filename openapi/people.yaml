@@ -21,7 +21,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PersonDto'
+                $ref: '#/components/schemas/PersonWithIdDto'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -38,6 +38,29 @@ paths:
       responses:
         '200':
           description: person deleted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Person not found.
+    put:
+      operationId: updatePerson
+      parameters:
+        - name: personId
+          in: path
+          schema:
+            type: string
+            x-scala-type: org.robmaksoftware.domain.PersonId
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonDto'
+
+      responses:
+        '200':
+          description: updated person
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -82,9 +105,9 @@ components:
           type: array
           x-scala-array-type: List
           items:
-            $ref: '#/components/schemas/PersonDto'
+            $ref: '#/components/schemas/PersonWithIdDto'
 
-    PersonDto:
+    PersonWithIdDto:
       type: object
       required:
         - id
@@ -96,6 +119,29 @@ components:
       properties:
         id:
           type: string
+        name:
+          type: string
+        age:
+          type: integer
+          x-scala-type: Int
+        sex:
+          type: string
+        credit:
+          type: number
+          x-scala-type: Double
+        joined:
+          type: number
+          x-scala-type: Long
+
+    PersonDto:
+      type: object
+      required:
+        - name
+        - age
+        - sex
+        - credit
+        - joined
+      properties:
         name:
           type: string
         age:

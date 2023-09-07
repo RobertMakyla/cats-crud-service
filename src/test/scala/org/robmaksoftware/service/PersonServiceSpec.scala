@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit
 
 import cats.effect.IO
 import cats.effect.testing.scalatest.AsyncIOSpec
+import cats.syntax.option._
 import org.robmaksoftware.domain.{DateCredits, PersonWithId, Person, PersonId}
 import org.robmaksoftware.domain.Sex.{Female, Male}
 import org.robmaksoftware.dao.Dao
@@ -37,7 +38,7 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
       } yield (p, n)
 
       res.asserting{ res =>
-        res._1.get shouldBe p1
+        res._1 shouldBe p1.some
         res._2.isEmpty shouldBe true
       }
     }
@@ -52,6 +53,19 @@ class PersonServiceSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO a
       res.asserting{ res =>
         res._1 shouldBe 1
         res._2.isEmpty shouldBe true
+      }
+    }
+
+    "update" in { service =>
+      val res = for {
+        id <- service.add(p1)
+        i <- service.update(id, p2)
+        p <- service.get(id)
+      } yield (i, p)
+
+      res.asserting{ res =>
+        res._1 shouldBe 1
+        res._2 shouldBe p2.some
       }
     }
 

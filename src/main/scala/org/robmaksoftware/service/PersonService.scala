@@ -15,6 +15,8 @@ abstract class PersonService[F[_]] {
 
   def delete(id: PersonId): F[Int]
 
+  def update(id: PersonId, newValue: Person): F[Int]
+
   def count: F[Long]
 
   def sumCredits: F[Double]
@@ -66,6 +68,8 @@ object PersonService {
         .take(limit)
 
     def delete(id: PersonId): F[Int] = dao.delete(id)
+
+    def update(id: PersonId, newValue: Person): F[Int] = dao.update(id, newValue)
   }
 
 }

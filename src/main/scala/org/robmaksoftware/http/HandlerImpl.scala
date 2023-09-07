@@ -1,11 +1,11 @@
 package org.robmaksoftware.http
 
 import cats.Monad
-import cats.syntax.apply._ // for mapN
+import cats.syntax.apply._
 import cats.syntax.functor._
 import cats.syntax.traverse._
-import org.robmaksoftware.domain.{PersonId, PersonWithId}
-import org.robmaksoftware.http.definitions.PeopleDto
+import org.robmaksoftware.domain.{Person, PersonId, PersonWithId}
+import org.robmaksoftware.http.definitions.{PeopleDto, PersonDto}
 import org.robmaksoftware.service.PersonService
 import org.robmaksoftware.http.{Resource => HttpResource}
 import Converters._
@@ -55,7 +55,7 @@ class HandlerImpl[F[_] : Monad](
     validatedResponse.fold(errors => Monad[F].pure(HttpResource.GetPersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
   }
 
-  def deletePerson(respond: HttpResource.DeletePersonResponse.type)(personId: org.robmaksoftware.domain.PersonId): F[HttpResource.DeletePersonResponse] = {
+  override def deletePerson(respond: HttpResource.DeletePersonResponse.type)(personId: PersonId): F[HttpResource.DeletePersonResponse] = {
 
     val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.DeletePersonResponse]] = validateIsNonEmpty("person ID" , personId.value)
       .map { _ =>
@@ -67,5 +67,28 @@ class HandlerImpl[F[_] : Monad](
     validatedResponse.fold(errors => Monad[F].pure(HttpResource.DeletePersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
 
   }
+
+  override def updatePerson(respond: Resource.UpdatePersonResponse.type)(personId: PersonId, body: PersonDto): F[Resource.UpdatePersonResponse] = {
+
+    val validatedParams  =
+      (
+        validateIsNonEmpty("person ID" , personId.value),
+        validateIsNonEmpty("person name" , body.name),
+        validateRange("age", 0, 150, body.age ),
+        validateSex(body.sex),
+        validateInstant("joined", body.joined )
+      )
+
+    val validatedResponse: ValidatedNel[String, F[HttpResource.UpdatePersonResponse]] = validatedParams.mapN((vId, vName, vAge, vSex, vJoined ) =>
+      service
+        .update(PersonId(vId), Person(name = vName, age = vAge, sex = vSex, credit = body.credit, joined = vJoined))
+        .map { updatedRows: Int =>
+          if (updatedRows > 0) HttpResource.UpdatePersonResponse.Ok else HttpResource.UpdatePersonResponse.NotFound
+        }
+    )
+
+    validatedResponse.fold(errors => Monad[F].pure(HttpResource.UpdatePersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
+  }
+
 
 }
