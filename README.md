@@ -27,7 +27,7 @@ http://localhost:8080/people/api/person/test-id-1
 curl -X DELETE http://localhost:8080/people/api/person/test-id-1
 
 ### Update
-curl -X PUT http://localhost:8080/people/api/person/test-id-1 -H 'Content-Type: application/json' -d '{ "name":"OLD JACK", "age":99, "sex": "Man", "credit":200.1234234, "joined":100 }'
+curl -X PUT http://localhost:8080/people/api/person/test-id-1 -H 'Content-Type: application/json' -d '{ "name":"OLD JACK", "age":99, "sex": "Male", "credit":200.1234234, "joined":100 }'
    
 ### Create
-curl -X POST http://localhost:8080/people/api/person/test-id-1 -H 'Content-Type: application/json' -d '{ "name":"OLD MERRY", "age":70, "sex": "Female", "credit":34200.14234, "joined":200 }'
+curl -X POST http://localhost:8080/people/api/person -H 'Content-Type: application/json' -d '{ "name":"OLD MERRY", "age":70, "sex": "Female", "credit":34200.14234, "joined":200 }'
