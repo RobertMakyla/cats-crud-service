@@ -66,6 +66,27 @@ paths:
         '404':
           description: Person not found.
 
+  /people/api/person:
+    post:
+      operationId: createPerson
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonDto'
+
+      responses:
+        '200':
+          description: created person
+          content:
+            application/json:
+              schema:
+                type: string
+                x-scala-type: org.robmaksoftware.domain.PersonId
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
   /people/api/all:
     get:
       operationId: getAllPeople

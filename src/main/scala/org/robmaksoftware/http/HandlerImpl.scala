@@ -90,5 +90,24 @@ class HandlerImpl[F[_] : Monad](
     validatedResponse.fold(errors => Monad[F].pure(HttpResource.UpdatePersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
   }
 
+  override def createPerson(respond: HttpResource.CreatePersonResponse.type)(body: PersonDto): F[HttpResource.CreatePersonResponse] ={
+    val validatedParams  =
+      (
+        validateIsNonEmpty("person name" , body.name),
+        validateRange("age", 0, 150, body.age ),
+        validateSex(body.sex),
+        validateInstant("joined", body.joined )
+      )
+
+    val validatedResponse: ValidatedNel[String, F[HttpResource.CreatePersonResponse]] = validatedParams.mapN(( vName, vAge, vSex, vJoined ) =>
+      service
+        .add(Person(name = vName, age = vAge, sex = vSex, credit = body.credit, joined = vJoined))
+        .map(HttpResource.CreatePersonResponse.Ok)
+    )
+
+    validatedResponse.fold(errors => Monad[F].pure(HttpResource.CreatePersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
+
+  }
+
 
 }
