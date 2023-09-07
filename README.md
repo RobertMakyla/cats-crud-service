@@ -10,9 +10,8 @@
 - testing: Fixture, Property based testing (effectful and non-effectful)
 
 ## todo
--- add spec for http POST/PUT
-- http/db-doobie logging
 - plugin scalafmt (I want some nice formatting: for-comprehension align, https://stackoverflow.com/questions/47465834/code-formatting-how-to-align-inside-for-comprehension
+- http/db-doobie logging
 - cache (effectful?)
 - config: pureconfig ?
 - testing: circe golden

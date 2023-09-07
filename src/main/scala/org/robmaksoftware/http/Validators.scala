@@ -27,7 +27,7 @@ trait Validators {
   // Sex
   def validateSex(s: => String): ValidatedNel[String, Sex] =
     Validated
-      .fromOption(Sex.withNameInsensitiveOption(s), NonEmptyList(s"Sex $s is incorrect. Correct valuse: ${Sex.values.toList.mkString("[","; ","]")}", Nil))
+      .fromOption(Sex.withNameInsensitiveOption(s), NonEmptyList(s"Sex $s is not ${Sex.values.toList.mkString("[","; ","]")}", Nil))
 
   // Instant
   def validateInstant(paramName: String, value: Long): ValidatedNel[String, Instant] =

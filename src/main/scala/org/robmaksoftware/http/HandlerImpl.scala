@@ -1,8 +1,8 @@
 package org.robmaksoftware.http
 
 import cats.Monad
-import cats.syntax.apply._
-import cats.syntax.functor._
+import cats.syntax.apply._    // for mapN
+import cats.syntax.functor._  // for F.map()
 import cats.syntax.traverse._
 import org.robmaksoftware.domain.{Person, PersonId, PersonWithId}
 import org.robmaksoftware.http.definitions.{PeopleDto, PersonDto}
@@ -91,19 +91,22 @@ class HandlerImpl[F[_] : Monad](
   }
 
   override def createPerson(respond: HttpResource.CreatePersonResponse.type)(body: PersonDto): F[HttpResource.CreatePersonResponse] ={
-    val validatedParams  =
+
+    val validatedPerson: ValidatedNel[String, Person]   =
       (
         validateIsNonEmpty("person name" , body.name),
         validateRange("age", 0, 150, body.age ),
         validateSex(body.sex),
         validateInstant("joined", body.joined )
       )
+        .mapN{ Person(_, _, _ , body.credit, _) }
 
-    val validatedResponse: ValidatedNel[String, F[HttpResource.CreatePersonResponse]] = validatedParams.mapN(( vName, vAge, vSex, vJoined ) =>
+
+    val validatedResponse: ValidatedNel[String, F[HttpResource.CreatePersonResponse]] = validatedPerson.map { person =>
       service
-        .add(Person(name = vName, age = vAge, sex = vSex, credit = body.credit, joined = vJoined))
+        .add(person)
         .map(HttpResource.CreatePersonResponse.Ok)
-    )
+    }
 
     validatedResponse.fold(errors => Monad[F].pure(HttpResource.CreatePersonResponse.BadRequest(errors.toList.mkString("; "))), identity)
 

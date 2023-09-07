@@ -21,7 +21,7 @@ import org.robmaksoftware.http.definitions.PeopleDto
 class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO asserting*/ with Matchers {
 
 
-  "getPerson" - {
+  "get by ID" - {
 
     "returns Bad Request for empty ID" in { handler =>
       val res = handler.getPerson(HttpResource.GetPersonResponse)(PersonId(""))
@@ -48,7 +48,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
     }
   }
 
-  "deletePerson" - {
+  "delete" - {
 
     "returns Bad Request for empty ID" in { handler =>
       val res = handler.deletePerson(HttpResource.DeletePersonResponse)(PersonId(""))
@@ -75,7 +75,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
     }
   }
 
-  "getAllPeople" - {
+  "get all" - {
 
     "returns Bad Request for incorrect offset" in { handler =>
       handler
@@ -114,7 +114,51 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
     }
   }
 
-  add create / update //todo
+  "update" - {
+
+    "returns Bad Request for empty ID" in { handler =>
+      val res = handler.updatePerson(HttpResource.UpdatePersonResponse)(PersonId(""), p1.toDto)
+
+      res.asserting {
+        _ shouldBe HttpResource.UpdatePersonResponse.BadRequest("person ID is empty")
+      }
+    }
+
+    "returns Not Found for nonexisting ID" in { handler =>
+      val res = handler.updatePerson(HttpResource.UpdatePersonResponse)(PersonId("x"), p1.toDto)
+
+      res.asserting {
+        _ shouldBe HttpResource.UpdatePersonResponse.NotFound
+      }
+    }
+
+    "returns OK for updated entry" in { handler =>
+      for {
+        updateResult <- handler.updatePerson(HttpResource.UpdatePersonResponse)(id(2), p1.toDto)
+        _ = updateResult shouldBe HttpResource.UpdatePersonResponse.Ok
+        readResult <- handler.getPerson(HttpResource.GetPersonResponse)(id(2))
+        _ = readResult shouldBe HttpResource.GetPersonResponse.Ok(p1.toDtoWithId(id(2)))
+      } yield ()
+    }
+  }
+
+  "create" - {
+
+    "returns Bad Request for incorrect params" in { handler =>
+      val res = handler.createPerson(HttpResource.CreatePersonResponse)(p1.toDto.copy(age = -1, sex = "M"))
+
+      res.asserting {
+        _ shouldBe HttpResource.CreatePersonResponse.BadRequest("age is too small: -1 < 0; Sex M is not [Male; Female]")
+      }
+    }
+
+    "returns OK for created entry" in { handler =>
+      for {
+        createResult <- handler.createPerson(HttpResource.CreatePersonResponse)(p1.toDto)
+        _ = createResult shouldBe a[HttpResource.CreatePersonResponse.Ok]
+      } yield ()
+    }
+  }
 
   type FixtureParam = Handler[IO]
 
@@ -132,12 +176,12 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
     new FutureOutcome(ioOutcome.unsafeToFuture())
   }
 
-  private val date = Instant.ofEpochMilli(12345)
+  private val date = Instant.ofEpochMilli(12345678)
 
   private def id(i: Int) = PersonId(s"id-$i")
 
   private val p1 = Person("Robert", 37, Male, 10L, date)
-  private val p2 = Person("Jane", 38, Female, 20L, date.plusMillis(5))
-  private val p3 = Person("Mary", 25, Female, 30L, date.plusMillis(10))
+  private val p2 = Person("Jane", 38, Female, 20L, date.plusMillis(500))
+  private val p3 = Person("Mary", 25, Female, 30L, date.plusMillis(90000))
 
 }
