@@ -48,7 +48,7 @@ object PersonService {
     def creditsPerDate: fs2.Stream[F, DateCredits] =
       dao.allOrderByJoined
         .groupAdjacentBy(_.person.joined.truncatedTo(ChronoUnit.DAYS))
-        .map { case (epochday, chunk) =>
+        .map { case (epochday, chunk) ⇒
           val totalCredit = chunk.toList
             .map(_.person.credit)
             .sum

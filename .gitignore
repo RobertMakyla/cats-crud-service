@@ -3,6 +3,8 @@
 
 .idea
 .idea/*
+.bsp
+.bsp/*
 project/target
 target
 target/*

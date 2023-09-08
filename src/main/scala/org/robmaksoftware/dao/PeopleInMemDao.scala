@@ -23,34 +23,32 @@ final case class PeopleInMemDao[F[_]: Sync](private val people: HashMap[PersonId
 
   override def add(item: Person): F[PersonId] =
     for {
-      id <- makeId.map(PersonId.apply)
-      _ <- F.delay {
-        people.addOne(id -> item)
-      }
+      id ← makeId.map(PersonId.apply)
+      _ ← F.delay(people.addOne(id → item))
     } yield id
 
   override def update(id: PersonId, newItem: Person): F[Int] =
     for {
-      removedPersonOpt <- F.delay(people.remove(id))
-      res <-
+      removedPersonOpt ← F.delay(people.remove(id))
+      res ←
         if (removedPersonOpt.nonEmpty)
           F.delay {
-            people.addOne(id -> newItem)
+            people.addOne(id → newItem)
           }.as(1)
         else F.pure(0)
     } yield res
 
   override def delete(id: PersonId): F[Int] =
     for {
-      removedPersonOpt <- F.delay(people.remove(id))
-      res              <- if (removedPersonOpt.nonEmpty) F.pure(1) else F.pure(0)
+      removedPersonOpt ← F.delay(people.remove(id))
+      res ← if (removedPersonOpt.nonEmpty) F.pure(1) else F.pure(0)
     } yield res
 
   override def all: fs2.Stream[F, PersonWithId] = fs2.Stream.emits(
-    people.toList.map(elem => PersonWithId(elem._1, elem._2))
+    people.toList.map(elem ⇒ PersonWithId(elem._1, elem._2))
   )
 
   override def allOrderByJoined: fs2.Stream[F, PersonWithId] = fs2.Stream.emits(
-    people.toList.map(elem => PersonWithId(elem._1, elem._2)).sortBy(_.person.joined)
+    people.toList.map(elem ⇒ PersonWithId(elem._1, elem._2)).sortBy(_.person.joined)
   )
 }

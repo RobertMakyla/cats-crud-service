@@ -7,7 +7,7 @@ import org.scalatest.{FutureOutcome, Outcome}
 class PeopleDaoSqliteSpec extends PeopleDaoSpec {
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
-    val ioOutcome: IO[Outcome] = Dao.sqliteDao[IO].use { dao: Dao[IO, PersonId, Person, PersonWithId] =>
+    val ioOutcome: IO[Outcome] = Dao.sqliteDao[IO].use { dao: Dao[IO, PersonId, Person, PersonWithId] ⇒
       val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(dao))
       IO.fromFuture(IO(testResult.toFuture))
     }

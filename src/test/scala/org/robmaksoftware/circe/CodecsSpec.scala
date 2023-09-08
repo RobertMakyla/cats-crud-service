@@ -22,8 +22,8 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
     val decodedPersonId: Either[Error, PersonId] = decode[PersonId](jsonStr)
 
     decodedPersonId match {
-      case Right(resultPersonId) => resultPersonId shouldBe personId
-      case Left(error)           => fail(s"Decoding error: $error")
+      case Right(resultPersonId) ⇒ resultPersonId shouldBe personId
+      case Left(error)           ⇒ fail(s"Decoding error: $error")
     }
   }
 }

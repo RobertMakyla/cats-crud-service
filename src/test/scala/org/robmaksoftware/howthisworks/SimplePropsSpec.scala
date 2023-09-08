@@ -10,15 +10,15 @@ class SimplePropsSpec extends AnyFreeSpec with Matchers {
   type TwoInts = (Int, Int)
 
   private val smallBigIntGen: Gen[(Int, Int)] = for {
-    n <- Gen.choose(1, 9)
-    m <- Gen.choose(10, 100)
+    n ← Gen.choose(1, 9)
+    m ← Gen.choose(10, 100)
   } yield (n, m)
 
   implicit val smallBigIntArbitrary: Arbitrary[TwoInts] = Arbitrary(smallBigIntGen)
 
   "first int is smaller" in {
 
-    forAll { smallBig: (Int, Int) =>
+    forAll { smallBig: (Int, Int) ⇒
       val small = smallBig._1
       val big   = smallBig._2
 
@@ -28,7 +28,7 @@ class SimplePropsSpec extends AnyFreeSpec with Matchers {
 
   "first int is not equal to the second one" in {
 
-    forAll { smallBig: (Int, Int) =>
+    forAll { smallBig: (Int, Int) ⇒
       val small = smallBig._1
       val big   = smallBig._2
 

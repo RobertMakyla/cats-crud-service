@@ -12,7 +12,7 @@ import org.robmaksoftware.service.PersonService
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{FutureOutcome, Outcome}
-import org.robmaksoftware.http.{Resource => HttpResource}
+import org.robmaksoftware.http.{Resource ⇒ HttpResource}
 
 import scala.collection.mutable.HashMap
 import Converters._
@@ -22,7 +22,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
 
   "get by ID" - {
 
-    "returns Bad Request for empty ID" in { handler =>
+    "returns Bad Request for empty ID" in { handler ⇒
       val res = handler.getPerson(HttpResource.GetPersonResponse)(PersonId(""))
 
       res.asserting {
@@ -30,7 +30,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns Not Found for nonexisting ID" in { handler =>
+    "returns Not Found for nonexisting ID" in { handler ⇒
       val res = handler.getPerson(HttpResource.GetPersonResponse)(PersonId("x"))
 
       res.asserting {
@@ -38,7 +38,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns OK for correct ID" in { handler =>
+    "returns OK for correct ID" in { handler ⇒
       val res = handler.getPerson(HttpResource.GetPersonResponse)(id(2))
 
       res.asserting {
@@ -49,7 +49,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
 
   "delete" - {
 
-    "returns Bad Request for empty ID" in { handler =>
+    "returns Bad Request for empty ID" in { handler ⇒
       val res = handler.deletePerson(HttpResource.DeletePersonResponse)(PersonId(""))
 
       res.asserting {
@@ -57,7 +57,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns Not Found for nonexisting ID" in { handler =>
+    "returns Not Found for nonexisting ID" in { handler ⇒
       val res = handler.deletePerson(HttpResource.DeletePersonResponse)(PersonId("x"))
 
       res.asserting {
@@ -65,7 +65,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns OK for deleted entry" in { handler =>
+    "returns OK for deleted entry" in { handler ⇒
       val res = handler.deletePerson(HttpResource.DeletePersonResponse)(id(2))
 
       res.asserting {
@@ -76,19 +76,19 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
 
   "get all" - {
 
-    "returns Bad Request for incorrect offset" in { handler =>
+    "returns Bad Request for incorrect offset" in { handler ⇒
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = -1.some)
         .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("offset is too small: -1 < 0"))
     }
 
-    "returns Bad Request for incorrect limit" in { handler =>
+    "returns Bad Request for incorrect limit" in { handler ⇒
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(limit = 999.some)
         .asserting(_ shouldBe HttpResource.GetAllPeopleResponse.BadRequest("limit is too big: 999 > 500"))
     }
 
-    "returns Bad Request for all kinds of incorrect params" in { handler =>
+    "returns Bad Request for all kinds of incorrect params" in { handler ⇒
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = -1.some, limit = 999.some)
         .asserting(
@@ -96,7 +96,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
         )
     }
 
-    "returns OK with pagination" in { handler =>
+    "returns OK with pagination" in { handler ⇒
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)(offset = 1.some, limit = 1.some)
         .asserting(
@@ -110,7 +110,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
         )
     }
 
-    "returns OK without pagination" in { handler =>
+    "returns OK without pagination" in { handler ⇒
       handler
         .getAllPeople(HttpResource.GetAllPeopleResponse)()
         .asserting(
@@ -129,7 +129,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
 
   "update" - {
 
-    "returns Bad Request for empty ID" in { handler =>
+    "returns Bad Request for empty ID" in { handler ⇒
       val res = handler.updatePerson(HttpResource.UpdatePersonResponse)(PersonId(""), p1.toDto)
 
       res.asserting {
@@ -137,7 +137,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns Not Found for nonexisting ID" in { handler =>
+    "returns Not Found for nonexisting ID" in { handler ⇒
       val res = handler.updatePerson(HttpResource.UpdatePersonResponse)(PersonId("x"), p1.toDto)
 
       res.asserting {
@@ -145,11 +145,11 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns OK for updated entry" in { handler =>
+    "returns OK for updated entry" in { handler ⇒
       for {
-        updateResult <- handler.updatePerson(HttpResource.UpdatePersonResponse)(id(2), p1.toDto)
+        updateResult ← handler.updatePerson(HttpResource.UpdatePersonResponse)(id(2), p1.toDto)
         _ = updateResult shouldBe HttpResource.UpdatePersonResponse.Ok
-        readResult <- handler.getPerson(HttpResource.GetPersonResponse)(id(2))
+        readResult ← handler.getPerson(HttpResource.GetPersonResponse)(id(2))
         _ = readResult shouldBe HttpResource.GetPersonResponse.Ok(p1.toDtoWithId(id(2)))
       } yield ()
     }
@@ -157,7 +157,7 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
 
   "create" - {
 
-    "returns Bad Request for incorrect params" in { handler =>
+    "returns Bad Request for incorrect params" in { handler ⇒
       val res = handler.createPerson(HttpResource.CreatePersonResponse)(p1.toDto.copy(age = -1, sex = "M"))
 
       res.asserting {
@@ -165,9 +165,9 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
       }
     }
 
-    "returns OK for created entry" in { handler =>
+    "returns OK for created entry" in { handler ⇒
       for {
-        createResult <- handler.createPerson(HttpResource.CreatePersonResponse)(p1.toDto)
+        createResult ← handler.createPerson(HttpResource.CreatePersonResponse)(p1.toDto)
         _ = createResult shouldBe a[HttpResource.CreatePersonResponse.Ok]
       } yield ()
     }
@@ -178,11 +178,11 @@ class HandlerImplSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for IO ass
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
 
     val data = HashMap(
-      id(1) -> p1,
-      id(2) -> p2,
-      id(3) -> p3
+      id(1) → p1,
+      id(2) → p2,
+      id(3) → p3
     )
-    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO](data).use { dao: Dao[IO, PersonId, Person, PersonWithId] =>
+    val ioOutcome: IO[Outcome] = Dao.inMemDao[IO](data).use { dao: Dao[IO, PersonId, Person, PersonWithId] ⇒
       val testResult: FutureOutcome = withFixture(test.toNoArgAsyncTest(new HandlerImpl(PersonService.apply[IO](dao))))
       IO.fromFuture(IO(testResult.toFuture))
     }

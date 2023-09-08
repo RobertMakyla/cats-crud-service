@@ -7,7 +7,7 @@ import cats.syntax.traverse._
 import org.robmaksoftware.domain.{Person, PersonId, PersonWithId}
 import org.robmaksoftware.http.definitions.{PeopleDto, PersonDto}
 import org.robmaksoftware.service.PersonService
-import org.robmaksoftware.http.{Resource => HttpResource}
+import org.robmaksoftware.http.{Resource ⇒ HttpResource}
 import Converters._
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
 
@@ -31,18 +31,18 @@ class HandlerImpl[F[_]: Monad](
       )
 
     val validatedResponse: ValidatedNel[String, F[HttpResource.GetAllPeopleResponse]] =
-      validatedParams.mapN((validOffset, validLimit) =>
+      validatedParams.mapN((validOffset, validLimit) ⇒
         service
           .all(validOffset.getOrElse(0), validLimit.getOrElse(maxLimit))
           .compile
           .toList
-          .map { ls: List[PersonWithId] =>
+          .map { ls: List[PersonWithId] ⇒
             HttpResource.GetAllPeopleResponse.Ok(PeopleDto(ls.map(_.toDto)))
           }
       )
 
     validatedResponse.fold(
-      errors => Monad[F].pure(HttpResource.GetAllPeopleResponse.BadRequest(errors.toList.mkString("; "))),
+      errors ⇒ Monad[F].pure(HttpResource.GetAllPeopleResponse.BadRequest(errors.toList.mkString("; "))),
       identity
     )
   }
@@ -51,15 +51,15 @@ class HandlerImpl[F[_]: Monad](
 
     val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.GetPersonResponse]] =
       validateIsNonEmpty("person ID", personId.value)
-        .map { _ =>
+        .map { _ ⇒
           service.get(personId).map {
-            case Some(person) => HttpResource.GetPersonResponse.Ok(person.toDtoWithId(personId))
-            case None         => HttpResource.GetPersonResponse.NotFound
+            case Some(person) ⇒ HttpResource.GetPersonResponse.Ok(person.toDtoWithId(personId))
+            case None         ⇒ HttpResource.GetPersonResponse.NotFound
           }
         }
 
     validatedResponse.fold(
-      errors => Monad[F].pure(HttpResource.GetPersonResponse.BadRequest(errors.toList.mkString("; "))),
+      errors ⇒ Monad[F].pure(HttpResource.GetPersonResponse.BadRequest(errors.toList.mkString("; "))),
       identity
     )
   }
@@ -70,14 +70,14 @@ class HandlerImpl[F[_]: Monad](
 
     val validatedResponse: Validated[NonEmptyList[String], F[HttpResource.DeletePersonResponse]] =
       validateIsNonEmpty("person ID", personId.value)
-        .map { _ =>
-          service.delete(personId).map { deletedRows: Int =>
+        .map { _ ⇒
+          service.delete(personId).map { deletedRows: Int ⇒
             if (deletedRows > 0) HttpResource.DeletePersonResponse.Ok else HttpResource.DeletePersonResponse.NotFound
           }
         }
 
     validatedResponse.fold(
-      errors => Monad[F].pure(HttpResource.DeletePersonResponse.BadRequest(errors.toList.mkString("; "))),
+      errors ⇒ Monad[F].pure(HttpResource.DeletePersonResponse.BadRequest(errors.toList.mkString("; "))),
       identity
     )
 
@@ -97,16 +97,16 @@ class HandlerImpl[F[_]: Monad](
       )
 
     val validatedResponse: ValidatedNel[String, F[HttpResource.UpdatePersonResponse]] =
-      validatedParams.mapN((vId, vName, vAge, vSex, vJoined) =>
+      validatedParams.mapN((vId, vName, vAge, vSex, vJoined) ⇒
         service
           .update(PersonId(vId), Person(name = vName, age = vAge, sex = vSex, credit = body.credit, joined = vJoined))
-          .map { updatedRows: Int =>
+          .map { updatedRows: Int ⇒
             if (updatedRows > 0) HttpResource.UpdatePersonResponse.Ok else HttpResource.UpdatePersonResponse.NotFound
           }
       )
 
     validatedResponse.fold(
-      errors => Monad[F].pure(HttpResource.UpdatePersonResponse.BadRequest(errors.toList.mkString("; "))),
+      errors ⇒ Monad[F].pure(HttpResource.UpdatePersonResponse.BadRequest(errors.toList.mkString("; "))),
       identity
     )
   }
@@ -124,14 +124,14 @@ class HandlerImpl[F[_]: Monad](
       )
         .mapN { Person(_, _, _, body.credit, _) }
 
-    val validatedResponse: ValidatedNel[String, F[HttpResource.CreatePersonResponse]] = validatedPerson.map { person =>
+    val validatedResponse: ValidatedNel[String, F[HttpResource.CreatePersonResponse]] = validatedPerson.map { person ⇒
       service
         .add(person)
         .map(HttpResource.CreatePersonResponse.Ok)
     }
 
     validatedResponse.fold(
-      errors => Monad[F].pure(HttpResource.CreatePersonResponse.BadRequest(errors.toList.mkString("; "))),
+      errors ⇒ Monad[F].pure(HttpResource.CreatePersonResponse.BadRequest(errors.toList.mkString("; "))),
       identity
     )
 

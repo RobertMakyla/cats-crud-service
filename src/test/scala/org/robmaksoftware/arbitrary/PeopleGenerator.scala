@@ -10,11 +10,11 @@ object PeopleGenerator {
 
   implicit val arbitraryPerson: Arbitrary[Person] = Arbitrary {
     for {
-      name   <- Gen.listOfN(15, Gen.alphaChar).map(_.mkString)
-      age    <- Gen.choose(0, 120)
-      sex    <- Gen.oneOf(Sex.values)
-      credit <- Gen.choose(0.0d, 100d)
-      joined <- Gen.choose(0, Instant.now().toEpochMilli).map(Instant.ofEpochMilli)
+      name   ← Gen.listOfN(15, Gen.alphaChar).map(_.mkString)
+      age    ← Gen.choose(0, 120)
+      sex    ← Gen.oneOf(Sex.values)
+      credit ← Gen.choose(0.0d, 100d)
+      joined ← Gen.choose(0, Instant.now().toEpochMilli).map(Instant.ofEpochMilli)
     } yield Person(
       name   = name,
       age    = age,
@@ -26,8 +26,8 @@ object PeopleGenerator {
 
   implicit val twoPeopleArb: Arbitrary[(Person, Person)] = Arbitrary {
     for {
-      genP1 <- arbitrary[Person]
-      genP2 <- arbitrary[Person]
+      genP1 ← arbitrary[Person]
+      genP2 ← arbitrary[Person]
     } yield (genP1, genP2)
   }
 }

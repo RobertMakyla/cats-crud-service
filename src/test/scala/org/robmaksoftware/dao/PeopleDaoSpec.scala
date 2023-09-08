@@ -14,13 +14,13 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
 
   "PeopleDao should" - {
 
-    "Create with unique ID" in { repo =>
+    "Create with unique ID" in { repo ⇒
       val result = for {
-        id1 <- repo.add(p1)
-        id2 <- repo.add(p1)
+        id1 ← repo.add(p1)
+        id2 ← repo.add(p1)
       } yield (id1, id2)
 
-      result.asserting { res =>
+      result.asserting { res ⇒
         val (resId1, resId2) = res
         resId1.value should not be empty
         resId2.value should not be empty
@@ -28,43 +28,43 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
       }
     }
 
-    "Read" in { repo =>
+    "Read" in { repo ⇒
       val result = for {
-        id1 <- repo.add(p1)
-        _   <- repo.add(p2)
-        p   <- repo.get(id1)
-        n   <- repo.get(PersonId("X"))
+        id1 ← repo.add(p1)
+        _   ← repo.add(p2)
+        p   ← repo.get(id1)
+        n   ← repo.get(PersonId("X"))
       } yield (p, n)
 
-      result.asserting { res =>
+      result.asserting { res ⇒
         val (personOpt, noPerson) = res
         personOpt shouldBe p1.some
         noPerson shouldBe none
       }
     }
 
-    "Update existing Person" in { repo =>
+    "Update existing Person" in { repo ⇒
       val result = for {
-        id1 <- repo.add(p1)
-        i   <- repo.update(id1, p2)
-        p   <- repo.get(id1)
+        id1 ← repo.add(p1)
+        i   ← repo.update(id1, p2)
+        p   ← repo.get(id1)
       } yield (i, p)
 
-      result.asserting { res =>
+      result.asserting { res ⇒
         val (inserted, personOpt) = res
         inserted shouldBe 1
         personOpt shouldBe p2.some
       }
     }
 
-    "Update non-existing Person" in { repo =>
+    "Update non-existing Person" in { repo ⇒
       val result = for {
-        id1 <- repo.add(p1)
-        i   <- repo.update(PersonId("X"), p2)
-        p   <- repo.get(id1)
+        id1 ← repo.add(p1)
+        i   ← repo.update(PersonId("X"), p2)
+        p   ← repo.get(id1)
       } yield (i, p)
 
-      result.asserting { res =>
+      result.asserting { res ⇒
         val (inserted, personOpt) = res
         inserted shouldBe 0
         personOpt shouldBe p1.some
@@ -72,38 +72,38 @@ abstract class PeopleDaoSpec extends FixtureAsyncFreeSpec with AsyncIOSpec /*for
       }
     }
 
-    "Delete" in { repo =>
+    "Delete" in { repo ⇒
       val result = for {
-        id1 <- repo.add(p1)
-        _   <- repo.add(p2)
-        i   <- repo.delete(id1)
-        n   <- repo.get(id1)
+        id1 ← repo.add(p1)
+        _   ← repo.add(p2)
+        i   ← repo.delete(id1)
+        n   ← repo.get(id1)
       } yield (i, n)
 
-      result.asserting { res =>
+      result.asserting { res ⇒
         val (deleted, noPerson) = res
         deleted shouldBe 1
         noPerson shouldBe none
       }
     }
 
-    "Stream all" in { repo =>
+    "Stream all" in { repo ⇒
       val result: IO[List[PersonWithId]] = for {
-        _   <- repo.add(p1)
-        _   <- repo.add(p2)
-        _   <- repo.add(p3)
-        all <- repo.all.compile.toList
+        _   ← repo.add(p1)
+        _   ← repo.add(p2)
+        _   ← repo.add(p3)
+        all ← repo.all.compile.toList
       } yield all
 
       result.asserting(_.map(_.person) should contain allElementsOf expectedRecords)
     }
 
-    "Stream all order by joined" in { repo =>
+    "Stream all order by joined" in { repo ⇒
       val result: IO[List[PersonWithId]] = for {
-        _   <- repo.add(p2)
-        _   <- repo.add(p1)
-        _   <- repo.add(p3)
-        all <- repo.allOrderByJoined.compile.toList
+        _   ← repo.add(p2)
+        _   ← repo.add(p1)
+        _   ← repo.add(p3)
+        all ← repo.allOrderByJoined.compile.toList
       } yield all
 
       result.asserting(_.map(_.person).filter(expectedRecords.contains) shouldBe expectedRecords)
