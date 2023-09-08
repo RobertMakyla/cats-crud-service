@@ -39,8 +39,8 @@ class PeopleDaoGenProps[F[_]: MonadThrow](
     val p1 = pp._1
     val p2 = pp._2
     for {
-      id1: PersonId ← dao.add(p1)
-      _ ← dao.add(p2)
+      id1: PersonId     ← dao.add(p1)
+      _                 ← dao.add(p2)
       p: Option[Person] ← dao.get(id1)
       n: Option[Person] ← dao.get(PersonId("X"))
     } yield {
@@ -54,9 +54,9 @@ class PeopleDaoGenProps[F[_]: MonadThrow](
     val p2 = pp._2
     for {
       id1 ← dao.add(p1)
-      r1 ← dao.update(id1, p2)
-      r2 ← dao.update(PersonId("x"), p2)
-      p ← dao.get(id1)
+      r1  ← dao.update(id1, p2)
+      r2  ← dao.update(PersonId("x"), p2)
+      p   ← dao.get(id1)
     } yield {
       p.fold(false)(_ eqv p2) :| "update person correctly" &&
       (r1 eqv 1) :| "return number of updated records" &&
@@ -69,10 +69,10 @@ class PeopleDaoGenProps[F[_]: MonadThrow](
     val p2 = pp._2
     for {
       id1 ← dao.add(p1)
-      _ ← dao.add(p2)
-      r1 ← dao.delete(id1)
-      r2 ← dao.delete(PersonId("x"))
-      p ← dao.get(id1)
+      _   ← dao.add(p2)
+      r1  ← dao.delete(id1)
+      r2  ← dao.delete(PersonId("x"))
+      p   ← dao.get(id1)
     } yield {
       p.isEmpty :| "person is deleted" &&
       (r1 eqv 1) :| "return number of deleted records" &&
@@ -84,8 +84,8 @@ class PeopleDaoGenProps[F[_]: MonadThrow](
     val p1 = pp._1
     val p2 = pp._2
     for {
-      _ ← dao.add(p1)
-      _ ← dao.add(p2)
+      _   ← dao.add(p1)
+      _   ← dao.add(p2)
       res ← dao.all.compile.toList
     } yield {
       List(p1, p2).forall(res.map(_.person).contains) :| "person records are streamed"
@@ -96,8 +96,8 @@ class PeopleDaoGenProps[F[_]: MonadThrow](
     val p1 = pp._1
     val p2 = pp._2
     for {
-      _ ← dao.add(p1)
-      _ ← dao.add(p2)
+      _   ← dao.add(p1)
+      _   ← dao.add(p2)
       res ← dao.allOrderByJoined.compile.toList
     } yield {
       List(p1, p2).forall(res.map(_.person).contains) :| "person records are streamed" &&
