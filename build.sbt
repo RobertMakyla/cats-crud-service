@@ -46,6 +46,11 @@ lazy val root = project
       // db
       "org.postgresql" % "postgresql" % "42.6.0",
 
+      // logs
+      "org.typelevel" %% "log4cats-core" % "2.6.0", // Only if you want to Support Any Backend
+      "org.typelevel" %% "log4cats-slf4j" % "2.6.0", // Direct Slf4j Support - Recommended
+      "ch.qos.logback" % "logback-classic" % "1.4.11" exclude ("org.slf4j", "slf4j"),
+
       // doobie - JDBC layer for Scala/Cats
       "org.tpolecat" %% "doobie-core"      % doobieVersion,
       "org.tpolecat" %% "doobie-hikari"    % doobieVersion,          // HikariCP transactor.

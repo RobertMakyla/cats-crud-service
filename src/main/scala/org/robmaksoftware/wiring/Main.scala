@@ -7,6 +7,7 @@ import org.robmaksoftware.http.HandlerImpl
 import org.robmaksoftware.http.{Resource ⇒ HttpResource}
 import org.http4s.ember.server.EmberServerBuilder
 import com.comcast.ip4s.Port
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 object Main extends IOApp {
 
@@ -21,6 +22,7 @@ object Main extends IOApp {
 
       defaultServerBuilder = EmberServerBuilder
         .default[IO]
+        .withLogger(Slf4jLogger.getLoggerFromName("HTTP"))
         .withHttpApp(routes.orNotFound)
 
       serverBuilder = Port.fromInt(8080).fold(defaultServerBuilder)(defaultServerBuilder.withPort)

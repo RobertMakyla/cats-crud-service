@@ -1,11 +1,12 @@
 package org.robmaksoftware.service
 
 import java.time.temporal.ChronoUnit
-
-import cats.Functor
+import cats.effect.Sync
 import cats.syntax.functor._
+import cats.syntax.flatMap._
 import org.robmaksoftware.domain._
 import org.robmaksoftware.dao.Dao
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 abstract class PersonService[F[_]] {
 
@@ -28,13 +29,19 @@ abstract class PersonService[F[_]] {
 
 object PersonService {
 
-  def apply[F[_]: Functor](dao: Dao[F, PersonId, Person, PersonWithId])(implicit
+  def apply[F[_]: Sync](dao: Dao[F, PersonId, Person, PersonWithId])(implicit
       compiler: fs2.Compiler[F, F] // required for compiling fs2.Stream
   ) = new PersonService[F] {
 
+    private val logger = Slf4jLogger.getLogger[F]
+
     def add(p: Person): F[PersonId] = dao.add(p)
 
-    def get(id: PersonId): F[Option[Person]] = dao.get(id)
+    def get(id: PersonId): F[Option[Person]] =
+      for {
+        _   ← logger.info("GET " + id.value)
+        res ← dao.get(id)
+      } yield res
 
     def count: F[Long] = dao.all.compile.count
 
