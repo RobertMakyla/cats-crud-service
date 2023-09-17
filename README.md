@@ -10,7 +10,7 @@
 - testing: Fixture, Property based testing (effectful and non-effectful)
 
 ## todo
-- http/db-doobie logging
+- http logging
 - cache (effectful?)
 - config: pureconfig ?
 - testing: circe golden
