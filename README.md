@@ -6,8 +6,9 @@
 - db: Doobie, SQLite (in memory light db), flyway (version controlled db schema evolution)
 - code generator: guardrail.dev (for Http4s server, based on OpenAPI specification)
 - utils: enumeratum Enums , log4cats
-- json serialziers: Circe
+- json serializers: Circe
 - testing: Fixture, Property based testing (effectful and non-effectful)
+- logging Slf4j (logback.xml) effectful for the app, non-effectful for doobie LogHandler
 
 ## todo
 - http logging
