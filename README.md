@@ -11,7 +11,6 @@
 - logging Slf4j (logback.xml) effectful for the app, non-effectful for doobie LogHandler
 
 ## todo
-- http logging
 - cache (effectful?)
 - config: pureconfig ?
 - testing: circe golden

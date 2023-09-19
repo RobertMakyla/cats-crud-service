@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  */
 object MyLogHandler {
 
-  val handler: LogHandler = {
+  val mySlf4jLogHandler: LogHandler = {
     val logger = LoggerFactory.getLogger(getClass)
     LogHandler {
 

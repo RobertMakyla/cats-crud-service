@@ -6,9 +6,7 @@
     </encoder>
   </appender>
 
-  <logger name="HTTP" level="INFO">
-    <appender-ref ref="STDOUT" />
-  </logger>
+  <logger name="httpLogger" level="INFO"/>
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />

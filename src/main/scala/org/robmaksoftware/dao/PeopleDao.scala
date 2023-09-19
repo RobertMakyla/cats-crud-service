@@ -67,7 +67,7 @@ object PeopleDao {
 
   def makeDao: PeopleDao[doobie.ConnectionIO] = new PeopleDao[ConnectionIO] {
 
-    implicit val logHandler = MyLogHandler.handler
+    implicit val logHandler = MyLogHandler.mySlf4jLogHandler
 
     private def personValsToInsert(p: Person) = fr"${p.name}, ${p.age}, ${p.sex}, ${p.credit}, ${p.joined}"
 
