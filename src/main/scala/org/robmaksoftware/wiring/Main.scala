@@ -6,7 +6,7 @@ import org.robmaksoftware.service.PersonService
 import org.robmaksoftware.http.HandlerImpl
 import org.robmaksoftware.http.{Resource ⇒ HttpResource}
 import org.http4s.ember.server.EmberServerBuilder
-import com.comcast.ip4s.Port
+import com.comcast.ip4s._ // port"..." interpolator
 import org.http4s.server.middleware.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
@@ -34,7 +34,8 @@ object Main extends IOApp {
         .withLogger(logger)
         .withHttpApp(routesWithLogging.orNotFound)
 
-      serverBuilder = Port.fromInt(8080).fold(defaultServerBuilder)(defaultServerBuilder.withPort)
+      // serverBuilder = Port.fromInt(port8080).fold(defaultServerBuilder)(defaultServerBuilder.withPort)
+      serverBuilder = defaultServerBuilder.withPort(port"8080")
 
       server ← serverBuilder.build
     } yield ()
