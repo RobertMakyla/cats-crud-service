@@ -62,8 +62,10 @@ lazy val root = project
       "org.xerial"     % "sqlite-jdbc" % "3.42.0.0",
 
       // version controlled db schema evolution (migration from SQL files)
-      "org.flywaydb" % "flyway-core" % "9.20.1"
+      "org.flywaydb" % "flyway-core" % "9.20.1",
 
+      // config
+      "com.github.pureconfig" %% "pureconfig" % "0.17.4"
     ) ++ Seq(
       "io.circe" %% "circe-core", // JSON parsing library for Scala - powered by Cats (required by guardrail)
       "io.circe" %% "circe-generic",

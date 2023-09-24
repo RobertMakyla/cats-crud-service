@@ -9,10 +9,10 @@
 - json serializers: Circe
 - testing: Fixture, Property based testing (effectful and non-effectful)
 - logging Slf4j (logback.xml) effectful for the app, non-effectful for doobie LogHandler
+- config: pureconfig
 
 ## todo
 - cache (effectful?)
-- config: pureconfig ?
 - testing: circe golden
 
 ### Get all

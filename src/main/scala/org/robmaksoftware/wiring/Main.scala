@@ -6,9 +6,12 @@ import org.robmaksoftware.service.PersonService
 import org.robmaksoftware.http.HandlerImpl
 import org.robmaksoftware.http.{Resource ⇒ HttpResource}
 import org.http4s.ember.server.EmberServerBuilder
-import com.comcast.ip4s._ // port"..." interpolator
+import com.comcast.ip4s.Port
 import org.http4s.server.middleware.Logger
+import org.robmaksoftware.config.AppConf
 import org.typelevel.log4cats.slf4j.Slf4jLogger
+import pureconfig._
+import pureconfig.generic.auto._
 
 object Main extends IOApp {
 
@@ -18,24 +21,27 @@ object Main extends IOApp {
 
       dao ← Dao.sqliteDao[IO]
 
+      config ← IO.fromEither(ConfigSource.default.load[AppConf].left.map(e ⇒ new RuntimeException(e.prettyPrint()))).toResource
+
       service     = PersonService(dao)
       httpHandler = new HandlerImpl(service)
       logger      = Slf4jLogger.getLoggerFromName[IO]("httpLogger")
       routes      = new HttpResource[IO]().routes(httpHandler)
 
-      routesWithLogging = Logger.httpRoutes[IO](
-        logHeaders = true,
-        logBody    = true,
-        logAction  = Some(msg ⇒ logger.info(msg))
-      )(routes)
+      routesWithLoggingOpt =
+        if (config.logHttp) {
+          Logger.httpRoutes[IO](
+            logHeaders = true,
+            logBody    = true,
+            logAction  = Some(msg ⇒ logger.info(msg))
+          )(routes)
+        } else routes
 
       defaultServerBuilder = EmberServerBuilder
         .default[IO]
-        .withLogger(logger)
-        .withHttpApp(routesWithLogging.orNotFound)
+        .withHttpApp(routesWithLoggingOpt.orNotFound)
 
-      // serverBuilder = Port.fromInt(port8080).fold(defaultServerBuilder)(defaultServerBuilder.withPort)
-      serverBuilder = defaultServerBuilder.withPort(port"8080")
+      serverBuilder = Port.fromInt(config.port.value).fold(defaultServerBuilder)(defaultServerBuilder.withPort)
 
       server ← serverBuilder.build
     } yield ()
