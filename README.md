@@ -12,8 +12,7 @@
 - config: pureconfig
 
 ## todo
-- cache (effectful?)
-- testing: circe golden
+- testing: circe golden (check if each rebuild is changing seed and renaming test files - if so fix it)
 
 ### Get all
 http://localhost:8080/people/api/all
