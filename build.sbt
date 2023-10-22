@@ -84,7 +84,8 @@ lazy val root = project
           "org.robmaksoftware.circe._"
         )
       )
-    )
+    ),
+    addCommandAlias("compileAll", ";+compile;+Test/compile" /* ;+integration-tests/compile */)
   )
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1") // Define implicits (implicit0) in for-comprehensions or matches
