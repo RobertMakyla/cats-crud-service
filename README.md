@@ -12,7 +12,9 @@
 - config: pureconfig
 
 ## todo
-- testing: circe golden (check if each rebuild is changing seed and renaming test files - if so fix it)
+- add circe Codecs for 'Contract'
+- add circe golden tests (check if each rebuild is changing seed and renaming test files - if so fix it with some simple custom functionality)
+- apply Contract into Person (inser/update from HTTP should be an option)
 
 ### Get all
 http://localhost:8080/people/api/all
