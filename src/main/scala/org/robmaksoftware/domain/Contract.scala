@@ -1,40 +1,10 @@
 package org.robmaksoftware.domain
 
-trait Job {
-  type ResponsibilitiesType <: Responsibilities
-  type OncallType <: Oncall
-}
-
-case object Architect extends Job
-
-case object Developer extends Job
-
 trait Responsibilities {
   val meetingsWeekly: Int
 }
 
 trait Oncall
-
-package contract {
-
-  package responsibilities {
-
-    case class Developer(goals: List[String]) extends Responsibilities {
-      override val meetingsWeekly: Int = 3
-    }
-
-    case class Architect(roadmapsYearly: Int, certificateType: String) extends Responsibilities {
-      override val meetingsWeekly: Int = 1
-    }
-  }
-
-  package oncall {
-    case class Developer(daysPerWeek: Int) extends Oncall
-
-    case class Architect(email: String) extends Oncall
-  }
-
-}
 
 trait Contract[J <: Job] {
   def job: J
@@ -50,4 +20,30 @@ object Contract {
     def oncall: J#OncallType                     = oc
     def hourlyRateEur: Int                       = rate
   }
+
+  //  import io.circe._, io.circe.generic.semiauto._
+  //
+  //  implicit val decoderContract: Decoder[Contract] = deriveDecoder
+  //  implicit val encoderContract: Encoder[Contract] = deriveEncoder
+}
+
+package contract {
+
+  package responsibilities {
+
+    case class Developer(goals: List[String]) extends Responsibilities {
+      override val meetingsWeekly: Int = 3
+    }
+
+    case class Architect(roadmapsYearly: Int, certificate: String) extends Responsibilities {
+      override val meetingsWeekly: Int = 1
+    }
+  }
+
+  package oncall {
+    case class Developer(daysPerWeek: Int) extends Oncall
+
+    case class Architect(email: String) extends Oncall
+  }
+
 }
