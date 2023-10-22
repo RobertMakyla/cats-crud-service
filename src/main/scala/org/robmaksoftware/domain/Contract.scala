@@ -1,12 +1,14 @@
 package org.robmaksoftware.domain
 
+import cats.{Eq, Show}
+
 trait Responsibilities {
   val meetingsWeekly: Int
 }
 
 trait Oncall
 
-trait Contract[J <: Job] {
+trait Contract[+J <: Job] {
   def job: J
   def responsibilities: J#ResponsibilitiesType
   def oncall: J#OncallType
@@ -21,6 +23,8 @@ object Contract {
     def hourlyRateEur: Int                       = rate
   }
 
+  implicit val show: Show[Contract[Job]] =
+    Show.show(c ⇒ s"Contract(${c.job}, ${c.responsibilities}, ${c.oncall}, ${c.hourlyRateEur}) ")
   //  import io.circe._, io.circe.generic.semiauto._
   //
   //  implicit val decoderContract: Decoder[Contract] = deriveDecoder

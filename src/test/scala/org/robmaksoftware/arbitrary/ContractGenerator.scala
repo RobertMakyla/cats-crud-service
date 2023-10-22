@@ -19,9 +19,9 @@ object ContractGenerator {
 
   private val goals = Gen.listOfN(3, goal)
 
-  private val arbitraryResponsibilitiesDeveloper: Gen[R.Developer] = goals.map(R.Developer)
+  private val arbitraryResponsibilitiesDeveloper: Arbitrary[R.Developer] = Arbitrary { goals.map(R.Developer) }
 
-  private val arbitraryResponsibilitiesArchitect: Gen[R.Architect] =
+  private val arbitraryResponsibilitiesArchitect: Arbitrary[R.Architect] = Arbitrary {
     for {
       roadmaps ← Gen.choose(1, 4)
       cert     ← Gen.oneOf("IBM", "AWS", "GCP").map(_ + " certificate")
@@ -29,26 +29,32 @@ object ContractGenerator {
       roadmapsYearly = roadmaps,
       certificate    = cert
     )
+  }
 
-  private val arbitraryOncallDeveloper: Gen[OC.Developer] = Gen.choose(0, 7).map(OC.Developer)
-  private val arbitraryOncallArchitect: Gen[OC.Architect] = email.map(OC.Architect)
+  private val arbitraryOncallDeveloper: Arbitrary[OC.Developer] = Arbitrary { Gen.choose(0, 7).map(OC.Developer) }
+  private val arbitraryOncallArchitect: Arbitrary[OC.Architect] = Arbitrary { email.map(OC.Architect) }
 
-  private def arbitraryContractArchitect: Gen[Contract[Architect.type]] =
+  private def arbitraryContractArchitect: Arbitrary[Contract[Architect.type]] = Arbitrary {
     for {
-      resp   ← arbitraryResponsibilitiesArchitect
-      oncall ← arbitraryOncallArchitect
+      resp   ← arbitraryResponsibilitiesArchitect.arbitrary
+      oncall ← arbitraryOncallArchitect.arbitrary
       rate   ← Gen.choose(200, 300)
     } yield Contract[Architect.type](Architect, resp, oncall, rate)
+  }
 
-  private def arbitraryContractDeveloper: Gen[Contract[Developer.type]] =
+  private def arbitraryContractDeveloper: Arbitrary[Contract[Developer.type]] = Arbitrary {
     for {
-      resp   ← arbitraryResponsibilitiesDeveloper
-      oncall ← arbitraryOncallDeveloper
+      resp   ← arbitraryResponsibilitiesDeveloper.arbitrary
+      oncall ← arbitraryOncallDeveloper.arbitrary
       rate   ← Gen.choose(150, 250)
     } yield Contract[Developer.type](Developer, resp, oncall, rate)
+  }
 
-  val arbitraryContract: Arbitrary[Contract[_ <: Job]] = Arbitrary(
-    Gen.oneOf(arbitraryContractArchitect, arbitraryContractDeveloper)
-  )
+  val arbitraryContract: Arbitrary[Contract[Job]] = Arbitrary {
+    Gen.oneOf(
+      arbitraryContractArchitect.arbitrary,
+      arbitraryContractDeveloper.arbitrary
+    )
+  }
 
 }

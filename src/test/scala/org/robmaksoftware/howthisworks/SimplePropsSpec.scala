@@ -1,5 +1,8 @@
 package org.robmaksoftware.howthisworks
 
+import cats.syntax.show._
+import org.robmaksoftware.arbitrary.ContractGenerator
+import org.robmaksoftware.domain.{Contract, Job}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
@@ -7,33 +10,12 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks._
 
 class SimplePropsSpec extends AnyFreeSpec with Matchers {
 
-  type TwoInts = (Int, Int)
+  implicit val smallBigIntArbitrary: Arbitrary[Contract[Job]] = ContractGenerator.arbitraryContract
 
-  private val smallBigIntGen: Gen[(Int, Int)] = for {
-    n ← Gen.choose(1, 9)
-    m ← Gen.choose(10, 100)
-  } yield (n, m)
+  "contract" in {
 
-  implicit val smallBigIntArbitrary: Arbitrary[TwoInts] = Arbitrary(smallBigIntGen)
-
-  "first int is smaller" in {
-
-    forAll { smallBig: (Int, Int) ⇒
-      val small = smallBig._1
-      val big   = smallBig._2
-
-      small should be < big
+    forAll { c: Contract[Job] ⇒
+      println(c.show)
     }
   }
-
-  "first int is not equal to the second one" in {
-
-    forAll { smallBig: (Int, Int) ⇒
-      val small = smallBig._1
-      val big   = smallBig._2
-
-      small should not equal big
-    }
-  }
-
 }
