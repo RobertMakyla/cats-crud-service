@@ -24,7 +24,7 @@ object Contract {
   }
 
   implicit val show: Show[Contract[Job]] =
-    Show.show(c ⇒ s"Contract(${c.job}, ${c.responsibilities}, ${c.oncall}, ${c.hourlyRateEur}) ")
+    Show.show(c ⇒ s"Contract(${c.job}, ${c.responsibilities}, ${c.oncall}, Rate(${c.hourlyRateEur} euro/h)) ")
   //  import io.circe._, io.circe.generic.semiauto._
   //
   //  implicit val decoderContract: Decoder[Contract] = deriveDecoder
