@@ -2,8 +2,6 @@ package org.robmaksoftware.domain
 
 import cats.Eq
 import enumeratum.{Enum, EnumEntry}
-import contract.{responsibilities ⇒ R}
-import contract.{oncall ⇒ OC}
 
 sealed trait Job extends EnumEntry {
   type ResponsibilitiesType <: Responsibilities
@@ -13,13 +11,13 @@ sealed trait Job extends EnumEntry {
 object Job extends Enum[Job] {
 
   case object Architect extends Job {
-    type ResponsibilitiesType = R.Architect
-    type OncallType           = OC.Architect
+    type ResponsibilitiesType = ArchitectResp
+    type OncallType           = ArchitectOncall
   }
 
   case object Developer extends Job {
-    type ResponsibilitiesType = R.Developer
-    type OncallType           = OC.Developer
+    type ResponsibilitiesType = DeveloperResp
+    type OncallType           = DeveloperOncall
   }
 
   override def values: IndexedSeq[Job] = findValues

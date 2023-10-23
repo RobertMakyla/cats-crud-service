@@ -1,11 +1,9 @@
 package org.robmaksoftware.arbitrary
 
-import org.robmaksoftware.domain.{Contract, Job, contract}
+import org.robmaksoftware.domain.{ArchitectOncall, ArchitectResp, Contract, DeveloperOncall, DeveloperResp, Job}
 import org.robmaksoftware.domain.Job.Architect
 import org.robmaksoftware.domain.Job.Developer
 import org.scalacheck.{Arbitrary, Gen}
-import contract.{responsibilities ⇒ R}
-import contract.{oncall ⇒ OC}
 
 object ContractGenerator {
 
@@ -19,20 +17,20 @@ object ContractGenerator {
 
   private val goals = Gen.listOfN(3, goal)
 
-  private val arbitraryResponsibilitiesDeveloper: Arbitrary[R.Developer] = Arbitrary { goals.map(R.Developer) }
+  private val arbitraryResponsibilitiesDeveloper: Arbitrary[DeveloperResp] = Arbitrary { goals.map(DeveloperResp) }
 
-  private val arbitraryResponsibilitiesArchitect: Arbitrary[R.Architect] = Arbitrary {
+  private val arbitraryResponsibilitiesArchitect: Arbitrary[ArchitectResp] = Arbitrary {
     for {
       roadmaps ← Gen.choose(1, 4)
       cert     ← Gen.oneOf("IBM", "AWS", "GCP").map(_ + " certificate")
-    } yield R.Architect(
+    } yield ArchitectResp(
       roadmapsYearly = roadmaps,
       certificate    = cert
     )
   }
 
-  private val arbitraryOncallDeveloper: Arbitrary[OC.Developer] = Arbitrary { Gen.choose(0, 7).map(OC.Developer) }
-  private val arbitraryOncallArchitect: Arbitrary[OC.Architect] = Arbitrary { email.map(OC.Architect) }
+  private val arbitraryOncallDeveloper: Arbitrary[DeveloperOncall] = Arbitrary { Gen.choose(0, 7).map(DeveloperOncall) }
+  private val arbitraryOncallArchitect: Arbitrary[ArchitectOncall] = Arbitrary { email.map(ArchitectOncall) }
 
   private def arbitraryContractArchitect: Arbitrary[Contract[Architect.type]] = Arbitrary {
     for {
