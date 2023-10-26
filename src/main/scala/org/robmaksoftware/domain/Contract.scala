@@ -1,10 +1,8 @@
 package org.robmaksoftware.domain
 
-import cats.{Eq, Show}
+//================================================= Responsibilities ==================================================
 
-trait Responsibilities { val meetingsWeekly: Int }
-
-trait Oncall
+sealed trait Responsibilities { val meetingsWeekly: Int }
 
 case class DeveloperResp(goals: List[String]) extends Responsibilities {
   override val meetingsWeekly: Int = 3
@@ -14,9 +12,15 @@ case class ArchitectResp(roadmapsYearly: Int, certificate: String) extends Respo
   override val meetingsWeekly: Int = 1
 }
 
+//====================================================== Oncall =======================================================
+
+sealed trait Oncall
+
 case class DeveloperOncall(daysPerWeek: Int) extends Oncall
 
 case class ArchitectOncall(email: String) extends Oncall
+
+//===================================================== Contract =====================================================
 
 trait Contract[+J <: Job] {
   def job: J
