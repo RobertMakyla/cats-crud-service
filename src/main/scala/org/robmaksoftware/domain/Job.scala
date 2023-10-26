@@ -1,7 +1,7 @@
 package org.robmaksoftware.domain
 
 import cats.Eq
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{Enum, EnumEntry, NoSuchMember}
 
 sealed trait Job extends EnumEntry {
   type ResponsibilitiesType <: Responsibilities
@@ -22,5 +22,8 @@ object Job extends Enum[Job] {
 
   override def values: IndexedSeq[Job] = findValues
 
+  def decodeFromString(name: String): Either[String, Job] = withNameEither(name).left.map(_.getMessage)
+
   implicit val jobEq: Eq[Sex] = Eq.by(_.entryName)
+
 }
