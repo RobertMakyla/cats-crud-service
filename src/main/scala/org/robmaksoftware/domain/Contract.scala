@@ -40,9 +40,9 @@ object Job extends Enum[Job] {
 
 //===================================================== Contract =====================================================
 
-case class Contract[+J <: Job](  // Covariance '+J' is used so that Contract[Developer] is a subtype of Contract[Job] - used in Generators
-  job: J,
+case class Contract[+J <: Job]( // Covariance '+J' is used so that Contract[Developer] is a subtype of Contract[Job] - used in Generators
+    job: J,
 //  responsibilities: J#ResponsibilitiesType,  //PATH-DEPENDENT TYPES pain in circe (problems in scala 3)
 //  oncall: J#OncallType,
-  hourlyRateEur: Int
+    hourlyRateEur: Int
 )

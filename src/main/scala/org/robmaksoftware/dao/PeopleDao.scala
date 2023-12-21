@@ -59,7 +59,7 @@ object PeopleDao {
   private val tableNameFr       = Fragment.const(tableName)
   private val pk                = "id"
   private val valueCols         = List("name", "age", "sex", "credit", "joined")
-  private val valueColsToUpdate = valueCols.map(col ⇒ s"$col = ?").mkString(", ")
+  private val valueColsToUpdate = valueCols.map(col => s"$col = ?").mkString(", ")
   private val valueColsFr       = Fragment.const(valueCols.mkString(", "))
   private val allColsFr         = Fragment.const((pk :: valueCols).mkString(", "))
 
@@ -91,7 +91,7 @@ object PeopleDao {
     override def add(p: Person): ConnectionIO[PersonId] = {
       val id: PersonId = newId
       sql"INSERT INTO $tableNameFr ($allColsFr) VALUES ($id, ${personValsToInsert(p)}) ".update.run
-        .map(_ ⇒ id)
+        .map(_ => id)
     }
 
     override def update(id: PersonId, p: Person): ConnectionIO[Int] =

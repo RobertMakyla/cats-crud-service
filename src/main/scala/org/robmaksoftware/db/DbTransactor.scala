@@ -30,11 +30,11 @@ object DbTransactor {
   ): Resource[F, Transactor[F]] =
     for {
 
-      filePath ← tempDbFilePath.toResource
+      filePath <- tempDbFilePath.toResource
       url = s"jdbc:sqlite:$filePath"
-      ec         ← ExecutionContexts.fixedThreadPool[F](poolSize)
-      transactor ← HikariTransactor.newHikariTransactor[F](driver, url, user, pass, ec)
-      _ ← Sync[F].delay {
+      ec         <- ExecutionContexts.fixedThreadPool[F](poolSize)
+      transactor <- HikariTransactor.newHikariTransactor[F](driver, url, user, pass, ec)
+      _ <- Sync[F].delay {
         flywayConfig(url, user, pass, flywayMigration)
           .load()
           .migrate()

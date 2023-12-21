@@ -1,7 +1,17 @@
 package org.robmaksoftware
 
 import io.circe.{Codec, Decoder, Encoder}
-import org.robmaksoftware.domain.{ArchitectOncall, ArchitectResp, Contract, DeveloperOncall, DeveloperResp, Job, Oncall, PersonId, Responsibility}
+import org.robmaksoftware.domain.{
+  ArchitectOncall,
+  ArchitectResp,
+  Contract,
+  DeveloperOncall,
+  DeveloperResp,
+  Job,
+  Oncall,
+  PersonId,
+  Responsibility
+}
 import cats.syntax.functor._
 import enumeratum.EnumEntry
 import io.circe.generic.extras.Configuration
@@ -23,8 +33,8 @@ package object circe {
   import io.circe.syntax._
 
   def myDeriveFromEnum[A <: EnumEntry](
-    decoder: String => Either[String, A],
-    encoder: A => String
+      decoder: String => Either[String, A],
+      encoder: A => String
   ): Codec[A] = Codec.from(
     Decoder.decodeString.emap(decoder),
     Encoder.encodeString.contramap(encoder)
@@ -65,7 +75,6 @@ package object circe {
 //    }
 //  )
 
-
- implicit val ContractCodec: Codec[Contract[Job]] = deriveConfiguredCodec
+  implicit val ContractCodec: Codec[Contract[Job]] = deriveConfiguredCodec
 
 }

@@ -8,7 +8,7 @@ import org.scalacheck.effect.PropF.effectOfPropFToPropF
 trait MissingPropsConverters {
 
   implicit def propToPropF[F[_]: MonadThrow](p: Prop): PropF[F] =
-    PropF[F] { genParams ⇒
+    PropF[F] { genParams =>
       val r: Prop.Result = p.apply(genParams)
       PropF.Result(r.status, r.args, r.collected, r.labels)
     }

@@ -39,8 +39,8 @@ object PersonService {
 
     def get(id: PersonId): F[Option[Person]] =
       for {
-        _   ← logger.info("GET " + id.value)
-        res ← dao.get(id)
+        _   <- logger.info("GET " + id.value)
+        res <- dao.get(id)
       } yield res
 
     def count: F[Long] = dao.all.compile.count
@@ -55,7 +55,7 @@ object PersonService {
     def creditsPerDate: fs2.Stream[F, DateCredits] =
       dao.allOrderByJoined
         .groupAdjacentBy(_.person.joined.truncatedTo(ChronoUnit.DAYS))
-        .map { case (epochday, chunk) ⇒
+        .map { case (epochday, chunk) =>
           val totalCredit = chunk.toList
             .map(_.person.credit)
             .sum

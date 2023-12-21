@@ -8,11 +8,11 @@ import org.scalacheck.{Arbitrary, Gen}
 object ContractGenerator {
 
   private val name: Gen[String]  = Gen.stringOfN(5, Gen.alphaChar)
-  private val email: Gen[String] = name.map(n ⇒ s"$n@gmail.com")
+  private val email: Gen[String] = name.map(n => s"$n@gmail.com")
 
   private val goal: Gen[String] = for {
-    aName ← name
-    aType ← Gen.oneOf("Coursera certificate", "Udemy course", "Conference")
+    aName <- name
+    aType <- Gen.oneOf("Coursera certificate", "Udemy course", "Conference")
   } yield s"$aType $aName"
 
   private val goals = Gen.listOfN(3, goal)
@@ -21,8 +21,8 @@ object ContractGenerator {
 
   private val arbitraryResponsibilitiesArchitect: Arbitrary[ArchitectResp] = Arbitrary {
     for {
-      roadmaps ← Gen.choose(1, 4)
-      cert     ← Gen.oneOf("IBM", "AWS", "GCP").map(_ + " certificate")
+      roadmaps <- Gen.choose(1, 4)
+      cert     <- Gen.oneOf("IBM", "AWS", "GCP").map(_ + " certificate")
     } yield ArchitectResp(
       roadmapsYearly = roadmaps,
       certificate    = cert
@@ -34,28 +34,28 @@ object ContractGenerator {
 
   private val arbitraryArchitect: Arbitrary[Architect] = Arbitrary {
     for {
-      resp ← arbitraryResponsibilitiesArchitect.arbitrary
-      oncall ← arbitraryOncallArchitect.arbitrary
+      resp   <- arbitraryResponsibilitiesArchitect.arbitrary
+      oncall <- arbitraryOncallArchitect.arbitrary
     } yield Architect(resp, oncall)
   }
 
   private val arbitraryDeveloper: Arbitrary[Developer] = Arbitrary {
     for {
-      resp ← arbitraryResponsibilitiesDeveloper.arbitrary
-      oncall ← arbitraryOncallDeveloper.arbitrary
+      resp   <- arbitraryResponsibilitiesDeveloper.arbitrary
+      oncall <- arbitraryOncallDeveloper.arbitrary
     } yield Developer(resp, oncall)
   }
 
   private def arbitraryContractArchitect: Arbitrary[Contract[Architect]] = Arbitrary {
     for {
-      job   ← arbitraryArchitect.arbitrary
+      job   <- arbitraryArchitect.arbitrary
       rate <- Gen.choose(250, 300)
     } yield Contract[Architect](job, rate)
   }
 
   private def arbitraryContractDeveloper: Arbitrary[Contract[Developer]] = Arbitrary {
     for {
-      job   ← arbitraryDeveloper.arbitrary
+      job   <- arbitraryDeveloper.arbitrary
       rate <- Gen.choose(200, 250)
     } yield Contract[Developer](job, rate)
   }

@@ -4,7 +4,7 @@ import cats.effect._
 import org.robmaksoftware.dao.Dao
 import org.robmaksoftware.service.PersonService
 import org.robmaksoftware.http.HandlerImpl
-import org.robmaksoftware.http.{Resource ⇒ HttpResource}
+import org.robmaksoftware.http.{Resource => HttpResource}
 import org.http4s.ember.server.EmberServerBuilder
 import com.comcast.ip4s.Port
 import org.http4s.server.middleware.Logger
@@ -19,9 +19,9 @@ object Main extends IOApp {
 
     val server: Resource[IO, Unit] = for {
 
-      dao ← Dao.sqliteDao[IO]
+      dao <- Dao.sqliteDao[IO]
 
-      config ← IO.fromEither(ConfigSource.default.load[AppConf].left.map(e ⇒ new RuntimeException(e.prettyPrint()))).toResource
+      config <- IO.fromEither(ConfigSource.default.load[AppConf].left.map(e => new RuntimeException(e.prettyPrint()))).toResource
 
       service     = PersonService(dao)
       httpHandler = new HandlerImpl(service)
@@ -33,7 +33,7 @@ object Main extends IOApp {
           Logger.httpRoutes[IO](
             logHeaders = true,
             logBody    = true,
-            logAction  = Some(msg ⇒ logger.info(msg))
+            logAction  = Some(msg => logger.info(msg))
           )(routes)
         } else routes
 
@@ -43,11 +43,11 @@ object Main extends IOApp {
 
       serverBuilder = Port.fromInt(config.port.value).fold(defaultServerBuilder)(defaultServerBuilder.withPort)
 
-      server ← serverBuilder.build
+      server <- serverBuilder.build
     } yield ()
 
     server
-      .use(_ ⇒ IO.never)
+      .use(_ => IO.never)
       .as(ExitCode.Success)
   }
 

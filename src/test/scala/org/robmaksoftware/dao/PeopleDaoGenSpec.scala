@@ -27,7 +27,7 @@ object PeopleDaoGenSpec {
       personEq: Eq[Person]
   ): Resource[F, PeopleDaoGenProps[F]] =
     for {
-      dao ← Dao.sqliteDao[F]
+      dao <- Dao.sqliteDao[F]
     } yield new PeopleDaoGenProps[F](dao)
 
 }
