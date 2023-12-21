@@ -1,8 +1,8 @@
 package org.robmaksoftware.arbitrary
 
-import org.robmaksoftware.domain.{ArchitectOncall, ArchitectResp, Contract, DeveloperOncall, DeveloperResp, Job}
-import org.robmaksoftware.domain.Job.Architect
-import org.robmaksoftware.domain.Job.Developer
+import org.robmaksoftware.domain.{Architect, ArchitectOncall, ArchitectResp, Contract, Developer, DeveloperOncall, DeveloperResp, Job, JobType}
+import org.robmaksoftware.domain.JobType.{Architect => JobTypeArc}
+import org.robmaksoftware.domain.JobType.{Developer => JobTypeDev}
 import org.scalacheck.{Arbitrary, Gen}
 
 object ContractGenerator {
@@ -46,21 +46,21 @@ object ContractGenerator {
     } yield Developer(resp, oncall)
   }
 
-  private def arbitraryContractArchitect: Arbitrary[Contract[Architect]] = Arbitrary {
+  private def arbitraryContractArchitect: Arbitrary[Contract[JobTypeArc.type]] = Arbitrary {
     for {
       job   <- arbitraryArchitect.arbitrary
       rate <- Gen.choose(250, 300)
-    } yield Contract[Architect](job, rate)
+    } yield Contract[JobTypeArc.type](JobType.Architect, job, rate)
   }
 
-  private def arbitraryContractDeveloper: Arbitrary[Contract[Developer]] = Arbitrary {
+  private def arbitraryContractDeveloper: Arbitrary[Contract[JobTypeDev.type]] = Arbitrary {
     for {
       job   <- arbitraryDeveloper.arbitrary
       rate <- Gen.choose(200, 250)
-    } yield Contract[Developer](job, rate)
+    } yield Contract[JobTypeDev.type](JobType.Developer, job, rate)
   }
 
-  val arbitraryContract: Arbitrary[Contract[Job]] = Arbitrary {
+  val arbitraryContract: Arbitrary[Contract[JobType]] = Arbitrary {
     Gen.oneOf(
       arbitraryContractArchitect.arbitrary,
       arbitraryContractDeveloper.arbitrary
