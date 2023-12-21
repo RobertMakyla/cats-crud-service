@@ -27,7 +27,7 @@ package object circe {
 
   // Enums - do not use deriveEnumerationCodec
 
-  def myDeriveFromEnum[A <: EnumEntry](
+  def myDeriveFromEnum[A](
       decoder: String => Either[String, A],
       encoder: A => String
   ): Codec[A] = Codec.from(

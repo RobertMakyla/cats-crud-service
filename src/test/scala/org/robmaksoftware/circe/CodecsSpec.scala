@@ -2,6 +2,7 @@ package org.robmaksoftware.circe
 
 import io.circe.syntax._
 import org.robmaksoftware.domain.{
+  Architect,
   ArchitectOncall,
   ArchitectResp,
   Developer,
@@ -31,16 +32,31 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
       test[JobType](JobTypeArch, "\"Architect\"")
       test[JobType](JobTypeDev, "\"Developer\"")
     }
+
+    val developerResp = DeveloperResp(List("Cert", "Course"))
+    val architectResp = ArchitectResp(1, "GPC")
     "Responsibilities" in {
-      test[Responsibility[_]](DeveloperResp(List("Cert", "Course")), "{\"goals\":[\"Cert\",\"Course\"]}")
-      test[Responsibility[_]](ArchitectResp(1, "GPC"), "{\"roadmapsYearly\":1,\"certificate\":\"GPC\"}")
-    }
-    "Oncall" in {
-      test[Oncall[_]](DeveloperOncall(daysPerWeek = 4), "{\"daysPerWeek\":4}")
-      test[Oncall[_]](ArchitectOncall("a@a.com"), "{\"email\":\"a@a.com\"}")
+      test[Responsibility[_]](developerResp, "{\"DeveloperResp\":{\"goals\":[\"Cert\",\"Course\"]}}")
+      test[Responsibility[_]](architectResp, "{\"ArchitectResp\":{\"roadmapsYearly\":1,\"certificate\":\"GPC\"}}")
     }
 
-    // todo job
+    val developerOncall = DeveloperOncall(daysPerWeek = 4)
+    val architectOncall = ArchitectOncall("a@a.com")
+    "Oncall" in {
+      test[Oncall[_]](developerOncall, "{\"DeveloperOncall\":{\"daysPerWeek\":4}}")
+      test[Oncall[_]](architectOncall, "{\"ArchitectOncall\":{\"email\":\"a@a.com\"}}")
+    }
+
+    "Job" in {
+      test[Job[_]](
+        Developer(developerResp, developerOncall),
+        "{\"Developer\":{\"responsibility\":{\"goals\":[\"Cert\",\"Course\"]},\"oncall\":{\"daysPerWeek\":4}}}"
+      )
+      test[Job[_]](
+        Architect(architectResp, architectOncall),
+        "{\"Architect\":{\"responsibility\":{\"roadmapsYearly\":1,\"certificate\":\"GPC\"},\"oncall\":{\"email\":\"a@a.com\"}}}"
+      )
+    }
 
     // todo contract
 
@@ -52,7 +68,7 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
     jsonStr shouldBe encoded
 
     // Decode the JSON string back to an Instance
-    val decoded: Either[Error, A] = decode[A](jsonStr)
+    val decoded: Either[Error, A] = decode[A](encoded)
     decoded shouldBe Right(instance)
   }
 }
