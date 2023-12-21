@@ -1,12 +1,24 @@
 package org.robmaksoftware
 
 import io.circe.{Codec, Decoder, Encoder}
-import org.robmaksoftware.domain.{Architect, ArchitectOncall, ArchitectResp, Contract, Developer, DeveloperOncall, DeveloperResp, Job, JobType, Oncall, PersonId, Responsibility}
+import org.robmaksoftware.domain.{
+  Architect,
+  ArchitectOncall,
+  ArchitectResp,
+  Contract,
+  Developer,
+  DeveloperOncall,
+  DeveloperResp,
+  Job,
+  JobType,
+  Oncall,
+  PersonId,
+  Responsibility
+}
 import cats.syntax.functor._
 import enumeratum.EnumEntry
 
 package object circe {
-
 
   implicit val personIdCodec: Codec[PersonId] = Codec.from(
     Decoder.decodeString.map(PersonId.apply),
@@ -36,7 +48,7 @@ package object circe {
 
   implicit val config: Configuration = Configuration.default
 
-  implicit val responsiblityCodec: Codec[Responsibility[_]] = deriveConfiguredCodec
+  implicit val responsiblityCodec: Codec[Responsibility[_]]     = deriveConfiguredCodec
   private implicit val DeveloperRespCodec: Codec[DeveloperResp] = deriveConfiguredCodec
   private implicit val ArchitectRespCodec: Codec[ArchitectResp] = deriveConfiguredCodec
 //  implicit val RespCodec: Codec[Responsibility] = Codec.from( // I could use 'deriveCodec' but then coding would be uglier (with additional class name - too much info)
@@ -50,7 +62,7 @@ package object circe {
 //    }
 //  )
 
-  implicit val oncallCodec: Codec[Oncall[_]] = deriveConfiguredCodec
+  implicit val oncallCodec: Codec[Oncall[_]]                        = deriveConfiguredCodec
   private implicit val DeveloperOncallCodec: Codec[DeveloperOncall] = deriveConfiguredCodec
   private implicit val ArchitectOncallCodec: Codec[ArchitectOncall] = deriveConfiguredCodec
 //  implicit val OncallCodec: Codec[Oncall] = Codec.from( // I could use 'deriveCodec' but then coding would be uglier (with additional class name - too much info)

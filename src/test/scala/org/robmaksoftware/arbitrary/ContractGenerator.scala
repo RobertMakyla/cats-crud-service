@@ -1,6 +1,16 @@
 package org.robmaksoftware.arbitrary
 
-import org.robmaksoftware.domain.{Architect, ArchitectOncall, ArchitectResp, Contract, Developer, DeveloperOncall, DeveloperResp, Job, JobType}
+import org.robmaksoftware.domain.{
+  Architect,
+  ArchitectOncall,
+  ArchitectResp,
+  Contract,
+  Developer,
+  DeveloperOncall,
+  DeveloperResp,
+  Job,
+  JobType
+}
 import org.robmaksoftware.domain.JobType.{Architect => JobTypeArc}
 import org.robmaksoftware.domain.JobType.{Developer => JobTypeDev}
 import org.scalacheck.{Arbitrary, Gen}
@@ -48,14 +58,14 @@ object ContractGenerator {
 
   private def arbitraryContractArchitect: Arbitrary[Contract[JobTypeArc.type]] = Arbitrary {
     for {
-      job   <- arbitraryArchitect.arbitrary
+      job  <- arbitraryArchitect.arbitrary
       rate <- Gen.choose(250, 300)
     } yield Contract[JobTypeArc.type](JobType.Architect, job, rate)
   }
 
   private def arbitraryContractDeveloper: Arbitrary[Contract[JobTypeDev.type]] = Arbitrary {
     for {
-      job   <- arbitraryDeveloper.arbitrary
+      job  <- arbitraryDeveloper.arbitrary
       rate <- Gen.choose(200, 250)
     } yield Contract[JobTypeDev.type](JobType.Developer, job, rate)
   }
