@@ -32,20 +32,32 @@ object ContractGenerator {
   private val arbitraryOncallDeveloper: Arbitrary[DeveloperOncall] = Arbitrary { Gen.choose(0, 7).map(DeveloperOncall) }
   private val arbitraryOncallArchitect: Arbitrary[ArchitectOncall] = Arbitrary { email.map(ArchitectOncall) }
 
-  private def arbitraryContractArchitect: Arbitrary[Contract[Architect.type]] = Arbitrary {
+  private val arbitraryArchitect: Arbitrary[Architect] = Arbitrary {
     for {
-      resp   ← arbitraryResponsibilitiesArchitect.arbitrary
+      resp ← arbitraryResponsibilitiesArchitect.arbitrary
       oncall ← arbitraryOncallArchitect.arbitrary
-      rate   ← Gen.choose(200, 300)
-    } yield Contract[Architect.type](Architect, resp, oncall, rate)
+    } yield Architect(resp, oncall)
   }
 
-  private def arbitraryContractDeveloper: Arbitrary[Contract[Developer.type]] = Arbitrary {
+  private val arbitraryDeveloper: Arbitrary[Developer] = Arbitrary {
     for {
-      resp   ← arbitraryResponsibilitiesDeveloper.arbitrary
+      resp ← arbitraryResponsibilitiesDeveloper.arbitrary
       oncall ← arbitraryOncallDeveloper.arbitrary
-      rate   ← Gen.choose(150, 250)
-    } yield Contract[Developer.type](Developer, resp, oncall, rate)
+    } yield Developer(resp, oncall)
+  }
+
+  private def arbitraryContractArchitect: Arbitrary[Contract[Architect]] = Arbitrary {
+    for {
+      job   ← arbitraryArchitect.arbitrary
+      rate <- Gen.choose(250, 300)
+    } yield Contract[Architect](job, rate)
+  }
+
+  private def arbitraryContractDeveloper: Arbitrary[Contract[Developer]] = Arbitrary {
+    for {
+      job   ← arbitraryDeveloper.arbitrary
+      rate <- Gen.choose(200, 250)
+    } yield Contract[Developer](job, rate)
   }
 
   val arbitraryContract: Arbitrary[Contract[Job]] = Arbitrary {

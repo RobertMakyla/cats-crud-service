@@ -1,14 +1,16 @@
 package org.robmaksoftware.domain
 
+import enumeratum.{Enum, EnumEntry}
+
 //================================================= Responsibilities ==================================================
 
-sealed trait Responsibilities { val meetingsWeekly: Int }
+sealed trait Responsibility { val meetingsWeekly: Int }
 
-case class DeveloperResp(goals: List[String]) extends Responsibilities {
+final case class DeveloperResp(goals: List[String]) extends Responsibility {
   override val meetingsWeekly: Int = 3
 }
 
-case class ArchitectResp(roadmapsYearly: Int, certificate: String) extends Responsibilities {
+final case class ArchitectResp(roadmapsYearly: Int, certificate: String) extends Responsibility {
   override val meetingsWeekly: Int = 1
 }
 
@@ -16,28 +18,31 @@ case class ArchitectResp(roadmapsYearly: Int, certificate: String) extends Respo
 
 sealed trait Oncall
 
-case class DeveloperOncall(daysPerWeek: Int) extends Oncall
+final case class DeveloperOncall(daysPerWeek: Int) extends Oncall
 
-case class ArchitectOncall(email: String) extends Oncall
+final case class ArchitectOncall(email: String) extends Oncall
+
+//===================================================== Job =====================================================
+
+sealed trait Job extends EnumEntry {
+  //  type ResponsibilitiesType <: Responsibilities // pain in circe
+  //  type OncallType           <: Oncall
+  def responsibility: Responsibility
+  def oncall: Oncall
+}
+
+object Job extends Enum[Job] {
+  final case class Architect(responsibility: ArchitectResp, oncall: ArchitectOncall) extends Job
+  final case class Developer(responsibility: DeveloperResp, oncall: DeveloperOncall) extends Job
+
+  override def values: IndexedSeq[Job] = findValues
+}
 
 //===================================================== Contract =====================================================
 
-trait Contract[+J <: Job] {
-  def job: J
-  def responsibilities: J#ResponsibilitiesType
-  def oncall: J#OncallType
-  def hourlyRateEur: Int
-}
-
-object Contract {
-  def apply[J <: Job](j: J, resp: J#ResponsibilitiesType, oc: J#OncallType, rate: Int): Contract[J] = new Contract[J] {
-    def job: J = j
-
-    def responsibilities: J#ResponsibilitiesType = resp
-
-    def oncall: J#OncallType = oc
-
-    def hourlyRateEur: Int = rate
-  }
-
-}
+case class Contract[+J <: Job](  // Covariance '+J' is used so that Contract[Developer] is a subtype of Contract[Job] - used in Generators
+  job: J,
+//  responsibilities: J#ResponsibilitiesType,  //PATH-DEPENDENT TYPES pain in circe (problems in scala 3)
+//  oncall: J#OncallType,
+  hourlyRateEur: Int
+)
