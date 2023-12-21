@@ -5,6 +5,9 @@ import org.robmaksoftware.domain.{
   Architect,
   ArchitectOncall,
   ArchitectResp,
+  Contract,
+  ContractArch,
+  ContractDev,
   Developer,
   DeveloperOncall,
   DeveloperResp,
@@ -28,6 +31,7 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
     "PersonId" in {
       test(PersonId("123"), "\"123\"")
     }
+
     "JobType" in {
       test[JobType](JobTypeArch, "\"Architect\"")
       test[JobType](JobTypeDev, "\"Developer\"")
@@ -35,13 +39,18 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
 
     val developerResp = DeveloperResp(List("Cert", "Course"))
     val architectResp = ArchitectResp(1, "GPC")
+
+    val developerOncall = DeveloperOncall(daysPerWeek = 4)
+    val architectOncall = ArchitectOncall("a@a.com")
+
+    val developerJob = Developer(developerResp, developerOncall)
+    val architectJob = Architect(architectResp, architectOncall)
+
     "Responsibilities" in {
       test[Responsibility[_]](developerResp, "{\"DeveloperResp\":{\"goals\":[\"Cert\",\"Course\"]}}")
       test[Responsibility[_]](architectResp, "{\"ArchitectResp\":{\"roadmapsYearly\":1,\"certificate\":\"GPC\"}}")
     }
 
-    val developerOncall = DeveloperOncall(daysPerWeek = 4)
-    val architectOncall = ArchitectOncall("a@a.com")
     "Oncall" in {
       test[Oncall[_]](developerOncall, "{\"DeveloperOncall\":{\"daysPerWeek\":4}}")
       test[Oncall[_]](architectOncall, "{\"ArchitectOncall\":{\"email\":\"a@a.com\"}}")
@@ -49,16 +58,25 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
 
     "Job" in {
       test[Job[_]](
-        Developer(developerResp, developerOncall),
+        developerJob,
         "{\"Developer\":{\"responsibility\":{\"goals\":[\"Cert\",\"Course\"]},\"oncall\":{\"daysPerWeek\":4}}}"
       )
       test[Job[_]](
-        Architect(architectResp, architectOncall),
+        architectJob,
         "{\"Architect\":{\"responsibility\":{\"roadmapsYearly\":1,\"certificate\":\"GPC\"},\"oncall\":{\"email\":\"a@a.com\"}}}"
       )
     }
 
-    // todo contract
+    "Contract" in {
+      test[Contract[_]](
+        ContractDev(developerJob, 123),
+        "{\"ContractDev\":{\"job\":{\"responsibility\":{\"goals\":[\"Cert\",\"Course\"]},\"oncall\":{\"daysPerWeek\":4}},\"hourlyRateEur\":123}}"
+      )
+      test[Contract[_]](
+        ContractArch(architectJob, 456),
+        "{\"ContractArch\":{\"job\":{\"responsibility\":{\"roadmapsYearly\":1,\"certificate\":\"GPC\"},\"oncall\":{\"email\":\"a@a.com\"}},\"hourlyRateEur\":456}}"
+      )
+    }
 
   }
 

@@ -6,6 +6,8 @@ import org.robmaksoftware.domain.{
   ArchitectOncall,
   ArchitectResp,
   Contract,
+  ContractArch,
+  ContractDev,
   Developer,
   DeveloperOncall,
   DeveloperResp,
@@ -15,8 +17,6 @@ import org.robmaksoftware.domain.{
   PersonId,
   Responsibility
 }
-import cats.syntax.functor._
-import enumeratum.EnumEntry
 
 package object circe {
 
@@ -51,35 +51,17 @@ package object circe {
   implicit val responsiblityCodec: Codec[Responsibility[_]]     = deriveConfiguredCodec
   private implicit val DeveloperRespCodec: Codec[DeveloperResp] = deriveConfiguredCodec
   private implicit val ArchitectRespCodec: Codec[ArchitectResp] = deriveConfiguredCodec
-//  implicit val RespCodec: Codec[Responsibility] = Codec.from( // I could use 'deriveCodec' but then coding would be uglier (with additional class name - too much info)
-//    List[Decoder[Responsibility]](
-//      Decoder[DeveloperResp].widen,
-//      Decoder[ArchitectResp].widen
-//    ).reduceLeft(_ or _),
-//    Encoder.instance {
-//      case d @ DeveloperResp(_)    ⇒ d.asJson
-//      case a @ ArchitectResp(_, _) ⇒ a.asJson
-//    }
-//  )
 
   implicit val oncallCodec: Codec[Oncall[_]]                        = deriveConfiguredCodec
   private implicit val DeveloperOncallCodec: Codec[DeveloperOncall] = deriveConfiguredCodec
   private implicit val ArchitectOncallCodec: Codec[ArchitectOncall] = deriveConfiguredCodec
-//  implicit val OncallCodec: Codec[Oncall] = Codec.from( // I could use 'deriveCodec' but then coding would be uglier (with additional class name - too much info)
-//    List[Decoder[Oncall]](
-//      Decoder[DeveloperOncall].widen,
-//      Decoder[ArchitectOncall].widen
-//    ).reduceLeft(_ or _),
-//    Encoder.instance {
-//      case d @ DeveloperOncall(_) ⇒ d.asJson
-//      case a @ ArchitectOncall(_) ⇒ a.asJson
-//    }
-//  )
 
   implicit val jobCodec: Codec[Job[_]]                     = deriveConfiguredCodec
   private implicit val DeveloperJobCodec: Codec[Developer] = deriveConfiguredCodec
   private implicit val ArchitectJobCodec: Codec[Architect] = deriveConfiguredCodec
 
-//  implicit val ContractCodec: Codec[Contract[_]] = deriveConfiguredCodec
+  implicit val ContractCodec: Codec[Contract[_]]      = deriveConfiguredCodec
+  implicit val ContractDevCodec: Codec[ContractDev]   = deriveConfiguredCodec
+  implicit val ContractArchCodec: Codec[ContractArch] = deriveConfiguredCodec
 
 }

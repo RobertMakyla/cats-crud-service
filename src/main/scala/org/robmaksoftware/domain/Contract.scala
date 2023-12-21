@@ -48,10 +48,12 @@ final case class Developer(responsibility: DeveloperResp, oncall: DeveloperOncal
 
 //===================================================== Contract =====================================================
 
-final case class Contract[+JT <: JobType]( // Covariance '+J' is used so that Contract[Developer] is a subtype of Contract[JobType] - used in Generators
-    jobType: JT,
-    job: Job[JT],
-//  responsibilities: J#ResponsibilitiesType,  //PATH-DEPENDENT TYPES pain in circe (problems in scala 3)
-//  oncall: J#OncallType,
-    hourlyRateEur: Int
-)
+sealed trait Contract[+JT <: JobType] { // Covariance '+J' is used so that Contract[Developer] is a subtype of Contract[JobType] - used in Generators
+  def job: Job[JT]
+  //  responsibilities: J#ResponsibilitiesType,  //PATH-DEPENDENT TYPES pain in circe (problems in scala 3)
+  //  oncall: J#OncallType,
+  def hourlyRateEur: Int
+}
+
+final case class ContractDev(job: Developer, hourlyRateEur: Int) extends Contract[JobType.Developer.type]
+final case class ContractArch(job: Architect, hourlyRateEur: Int) extends Contract[JobType.Architect.type]

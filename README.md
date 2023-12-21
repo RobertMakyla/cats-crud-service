@@ -12,11 +12,9 @@
 - config: pureconfig
 
 ## todo
-- CodecsSpec- fix 
-- CodecsSpec- complete ( all contract types, examples - decoding/encoding)
 - add circe golden tests (check if each rebuild is changing seed and renaming test files - if so fix it with some simple custom functionality)
-- apply Contract into Person (inser/update from HTTP should be an option)
-
+- add any optional field into Contract to actually test circe golden tests are passing
+- 
 ### Get all
 http://localhost:8080/people/api/all
 

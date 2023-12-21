@@ -5,6 +5,8 @@ import org.robmaksoftware.domain.{
   ArchitectOncall,
   ArchitectResp,
   Contract,
+  ContractArch,
+  ContractDev,
   Developer,
   DeveloperOncall,
   DeveloperResp,
@@ -60,14 +62,14 @@ object ContractGenerator {
     for {
       job  <- arbitraryArchitect.arbitrary
       rate <- Gen.choose(250, 300)
-    } yield Contract[JobTypeArc.type](JobType.Architect, job, rate)
+    } yield ContractArch(job, rate)
   }
 
   private def arbitraryContractDeveloper: Arbitrary[Contract[JobTypeDev.type]] = Arbitrary {
     for {
       job  <- arbitraryDeveloper.arbitrary
       rate <- Gen.choose(200, 250)
-    } yield Contract[JobTypeDev.type](JobType.Developer, job, rate)
+    } yield ContractDev(job, rate)
   }
 
   val arbitraryContract: Arbitrary[Contract[JobType]] = Arbitrary {
