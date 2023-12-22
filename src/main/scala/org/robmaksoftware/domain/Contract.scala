@@ -61,6 +61,6 @@ final case class ContractArch(job: Architect, hourlyRateEur: Int) extends Contra
 
 object Contract {
   implicit val contractEq: Eq[Contract[JobType]] = Eq.fromUniversalEquals[Contract[JobType]]
-  implicit val contractDevEq: Eq[ContractDev] = Eq.fromUniversalEquals[ContractDev]
-  implicit val contractArchEq: Eq[ContractArch] = Eq.fromUniversalEquals[ContractArch]
+  implicit val contractDevEq: Eq[ContractDev]    = Eq.fromUniversalEquals[ContractDev]
+  implicit val contractArchEq: Eq[ContractArch]  = Eq.fromUniversalEquals[ContractArch]
 }
