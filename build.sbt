@@ -69,7 +69,7 @@ lazy val root = project
     ) ++ Seq(
       "io.circe" %% "circe-core", // JSON parsing library for Scala - powered by Cats (required by guardrail)
       "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-generic-extras", //parse JSON in different cased formats such as snake_case, kebab-case, PascalCase or SCREAMING_SNAKE_CASE.
+      "io.circe" %% "circe-generic-extras", //parse JSON in different formats: snake_case, kebab-case, PascalCase or SCREAMING_SNAKE_CASE  (configurable with implicit val Configuration)
       "io.circe" %% "circe-parser"
     ).map(_ % circeVersion),
 
