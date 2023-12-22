@@ -15,7 +15,7 @@ class CirceGoldenSpec extends AnyFlatSpec
   import org.robmaksoftware.domain.Contract._ // Eq
   import org.robmaksoftware.arbitrary.ContractGenerator._ // Arbitrary
 
-  checkAll("GoldenCodec[Contract[JobType]]", GoldenCodecTests[Contract[JobType]].goldenCodec)
+  checkAll("GoldenCodec[Contract[JobType]]", GoldenCodecTests[Contract[JobType]](5).goldenCodec)
   checkAll("GoldenCodec[ContractArch]", GoldenCodecTests[ContractArch].goldenCodec)
   checkAll("GoldenCodec[ContractDev]", GoldenCodecTests[ContractDev].goldenCodec)
 }

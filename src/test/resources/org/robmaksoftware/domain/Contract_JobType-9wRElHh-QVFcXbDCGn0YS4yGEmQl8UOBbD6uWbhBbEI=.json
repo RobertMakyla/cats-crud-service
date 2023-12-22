@@ -1,0 +1,17 @@
+{
+  "ContractDev" : {
+    "job" : {
+      "responsibility" : {
+        "goals" : [
+          "Udemy course VSfsz",
+          "Coursera certificate PWCzH",
+          "Coursera certificate TrPZz"
+        ]
+      },
+      "oncall" : {
+        "daysPerWeek" : 7
+      }
+    },
+    "hourlyRateEur" : 202
+  }
+}

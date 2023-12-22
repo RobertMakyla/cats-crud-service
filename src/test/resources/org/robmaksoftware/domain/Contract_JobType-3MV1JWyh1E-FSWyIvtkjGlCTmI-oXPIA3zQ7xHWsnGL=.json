@@ -1,0 +1,17 @@
+{
+  "ContractDev" : {
+    "job" : {
+      "responsibility" : {
+        "goals" : [
+          "Conference fvHUX",
+          "Coursera certificate hYlua",
+          "Coursera certificate LFWeu"
+        ]
+      },
+      "oncall" : {
+        "daysPerWeek" : 5
+      }
+    },
+    "hourlyRateEur" : 235
+  }
+}

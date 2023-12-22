@@ -2,13 +2,13 @@
   "ContractArch" : {
     "job" : {
       "responsibility" : {
-        "roadmapsYearly" : 2,
+        "roadmapsYearly" : 3,
         "certificate" : "GCP certificate"
       },
       "oncall" : {
-        "email" : "ZQUAF@gmail.com"
+        "email" : "ESArX@gmail.com"
       }
     },
-    "hourlyRateEur" : 292
+    "hourlyRateEur" : 291
   }
 }

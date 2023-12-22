@@ -1,0 +1,15 @@
+{
+  "job" : {
+    "responsibility" : {
+      "goals" : [
+        "Udemy course NOtHR",
+        "Coursera certificate khnBy",
+        "Conference LyOcx"
+      ]
+    },
+    "oncall" : {
+      "daysPerWeek" : 1
+    }
+  },
+  "hourlyRateEur" : 220
+}
