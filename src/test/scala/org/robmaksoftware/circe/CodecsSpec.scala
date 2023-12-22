@@ -82,7 +82,7 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
 
   def test[A](instance: A, encoded: String)(implicit ev: Codec[A]) = {
     // Encode into Json
-    val jsonStr: String = instance.asJson.noSpaces
+    val jsonStr: String = instance.asJson.deepDropNullValues.noSpaces
     jsonStr shouldBe encoded
 
     // Decode the JSON string back to an Instance
