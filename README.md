@@ -12,9 +12,8 @@
 - config: pureconfig
 
 ## todo
-- add circe golden tests (check if each rebuild is changing seed and renaming test files - if so fix it with some simple custom functionality)
 - add any optional field into Contract to actually test circe golden tests are passing
-- 
+ 
 ### Get all
 http://localhost:8080/people/api/all
 
