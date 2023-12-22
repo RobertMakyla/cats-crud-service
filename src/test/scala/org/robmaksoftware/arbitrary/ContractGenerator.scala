@@ -58,21 +58,21 @@ object ContractGenerator {
     } yield Developer(resp, oncall)
   }
 
-  private def arbitraryContractArchitect: Arbitrary[Contract[JobTypeArc.type]] = Arbitrary {
+  implicit def arbitraryContractArchitect: Arbitrary[ContractArch] = Arbitrary {
     for {
       job  <- arbitraryArchitect.arbitrary
       rate <- Gen.choose(250, 300)
     } yield ContractArch(job, rate)
   }
 
-  private def arbitraryContractDeveloper: Arbitrary[Contract[JobTypeDev.type]] = Arbitrary {
+  implicit def arbitraryContractDeveloper: Arbitrary[ContractDev] = Arbitrary {
     for {
       job  <- arbitraryDeveloper.arbitrary
       rate <- Gen.choose(200, 250)
     } yield ContractDev(job, rate)
   }
 
-  val arbitraryContract: Arbitrary[Contract[JobType]] = Arbitrary {
+  implicit val arbitraryContract: Arbitrary[Contract[JobType]] = Arbitrary {
     Gen.oneOf(
       arbitraryContractArchitect.arbitrary,
       arbitraryContractDeveloper.arbitrary

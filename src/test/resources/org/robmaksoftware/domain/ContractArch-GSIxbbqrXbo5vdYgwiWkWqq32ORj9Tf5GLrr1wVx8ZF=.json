@@ -1,0 +1,12 @@
+{
+  "job" : {
+    "responsibility" : {
+      "roadmapsYearly" : 3,
+      "certificate" : "IBM certificate"
+    },
+    "oncall" : {
+      "email" : "HBgov@gmail.com"
+    }
+  },
+  "hourlyRateEur" : 263
+}

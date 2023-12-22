@@ -60,8 +60,9 @@ package object circe {
   private implicit val DeveloperJobCodec: Codec[Developer] = deriveConfiguredCodec
   private implicit val ArchitectJobCodec: Codec[Architect] = deriveConfiguredCodec
 
-  implicit val ContractCodec: Codec[Contract[_]]      = deriveConfiguredCodec
   implicit val ContractDevCodec: Codec[ContractDev]   = deriveConfiguredCodec
   implicit val ContractArchCodec: Codec[ContractArch] = deriveConfiguredCodec
+
+  implicit val ContractCodec: Codec[Contract[JobType]]      = deriveConfiguredCodec
 
 }

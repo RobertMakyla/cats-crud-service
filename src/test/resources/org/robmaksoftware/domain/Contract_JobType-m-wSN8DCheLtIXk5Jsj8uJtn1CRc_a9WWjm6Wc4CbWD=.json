@@ -1,0 +1,14 @@
+{
+  "ContractArch" : {
+    "job" : {
+      "responsibility" : {
+        "roadmapsYearly" : 2,
+        "certificate" : "GCP certificate"
+      },
+      "oncall" : {
+        "email" : "ZQUAF@gmail.com"
+      }
+    },
+    "hourlyRateEur" : 292
+  }
+}

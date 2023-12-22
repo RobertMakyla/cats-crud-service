@@ -68,11 +68,11 @@ class CodecsSpec extends AnyFreeSpec with Matchers {
     }
 
     "Contract" in {
-      test[Contract[_]](
+      test[Contract[JobType]](
         ContractDev(developerJob, 123),
         "{\"ContractDev\":{\"job\":{\"responsibility\":{\"goals\":[\"Cert\",\"Course\"]},\"oncall\":{\"daysPerWeek\":4}},\"hourlyRateEur\":123}}"
       )
-      test[Contract[_]](
+      test[Contract[JobType]](
         ContractArch(architectJob, 456),
         "{\"ContractArch\":{\"job\":{\"responsibility\":{\"roadmapsYearly\":1,\"certificate\":\"GPC\"},\"oncall\":{\"email\":\"a@a.com\"}},\"hourlyRateEur\":456}}"
       )

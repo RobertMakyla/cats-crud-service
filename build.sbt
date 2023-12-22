@@ -65,7 +65,11 @@ lazy val root = project
       "org.flywaydb" % "flyway-core" % "9.20.1",
 
       // config
-      "com.github.pureconfig" %% "pureconfig" % "0.17.4"
+      "com.github.pureconfig" %% "pureconfig" % "0.17.4",
+
+      //circe golden testing
+      "io.circe" %% "circe-golden" % "0.2.1" % Test // Circe golden testing ( to make sure that changing domain classes/codecs won't mess with encoded data persisted in the DB)
+
     ) ++ Seq(
       "io.circe" %% "circe-core", // JSON parsing library for Scala - powered by Cats (required by guardrail)
       "io.circe" %% "circe-generic",

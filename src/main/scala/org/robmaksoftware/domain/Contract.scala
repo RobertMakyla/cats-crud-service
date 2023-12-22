@@ -1,5 +1,6 @@
 package org.robmaksoftware.domain
 
+import cats.Eq
 import enumeratum.{Enum, EnumEntry}
 
 //================================================= Responsibilities ==================================================
@@ -57,3 +58,9 @@ sealed trait Contract[+JT <: JobType] { // Covariance '+J' is used so that Contr
 
 final case class ContractDev(job: Developer, hourlyRateEur: Int) extends Contract[JobType.Developer.type]
 final case class ContractArch(job: Architect, hourlyRateEur: Int) extends Contract[JobType.Architect.type]
+
+object Contract {
+  implicit val contractEq: Eq[Contract[JobType]] = Eq.fromUniversalEquals[Contract[JobType]]
+  implicit val contractDevEq: Eq[ContractDev] = Eq.fromUniversalEquals[ContractDev]
+  implicit val contractArchEq: Eq[ContractArch] = Eq.fromUniversalEquals[ContractArch]
+}
