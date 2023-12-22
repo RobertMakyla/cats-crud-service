@@ -10,9 +10,6 @@
 - testing: Fixture, Property based testing (effectful and non-effectful)
 - logging Slf4j (logback.xml) effectful for the app, non-effectful for doobie LogHandler
 - config: pureconfig
-
-## todo
-- add any optional field into Contract to actually test circe golden tests are passing
  
 ### Get all
 http://localhost:8080/people/api/all
