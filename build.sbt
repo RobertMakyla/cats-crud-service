@@ -68,9 +68,8 @@ lazy val root = project
       "com.github.pureconfig" %% "pureconfig" % "0.17.4",
 
       //circe golden testing
-      "io.circe" %% "circe-golden" % "0.2.1" % Test // Circe golden testing ( to make sure that changing domain classes/codecs won't mess with encoded data persisted in the DB)
+      "io.circe" %% "circe-golden" % "0.2.1" % Test, // Circe golden testing ( to make sure that changing domain classes/codecs won't mess with encoded data persisted in the DB)
 
-    ) ++ Seq(
       "io.circe" %% "circe-core", // JSON parsing library for Scala - powered by Cats (required by guardrail)
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-generic-extras", //parse JSON in different formats: snake_case, kebab-case, PascalCase or SCREAMING_SNAKE_CASE  (configurable with implicit val Configuration)
